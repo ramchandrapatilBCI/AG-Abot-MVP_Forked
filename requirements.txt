@@ -37,10 +37,6 @@ crashtest==0.4.1
 cymem==2.0.8
 dataclasses-json==0.5.14
 datasets==2.16.1
-Dbias==0.1.5
-deepeval==0.20.43
-Deprecated==1.2.14
-detoxify==0.5.1
 dill==0.3.7
 distlib==0.3.8
 distro==1.9.0
