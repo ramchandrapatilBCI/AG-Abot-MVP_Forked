@@ -9,21 +9,21 @@ Thank you for choosing the Social Care Chatbot to assist you in determining your
 1. **Chat Initialization:**
    - To start the chat, simply type your first message in the chat window and press "Enter."
    - The chatbot will respond and guide you through the assessment process.
-
+#
 2. **Assessment Process:**
    - The chatbot will ask a series of questions to assess your eligibility for social care services.
    - Answer each question honestly and to the best of your knowledge.
-
+#
 3. **Context Retention:**
    - The chatbot remembers your previous answers to provide a context-aware conversation.
    - Feel free to ask for a transcript at any time.
-
+#
 4. **Transcript Request:**
    - To receive a transcript of your chat session, type "transcript" at any point during the conversation.
-
+#
 5. **Ending the Chat:**
    - When you're ready to end the chat, type "end" to conclude the session.
-
+#
 ### Important Notes:
 
 - This chatbot is designed for informational purposes and does not replace professional advice.
