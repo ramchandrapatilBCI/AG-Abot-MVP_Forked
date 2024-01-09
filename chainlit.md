@@ -1,14 +1,37 @@
-# Welcome to Chainlit! 🚀🤖
+# Welcome to Social Care Chatbot
 
-Hi there, Developer! 👋 We're excited to have you on board. Chainlit is a powerful tool designed to help you prototype, debug and share applications built on top of LLMs.
+## Getting Started
 
-## Useful Links 🔗
+Thank you for choosing the Social Care Chatbot to assist you in determining your eligibility for social care services. This interactive chatbot is designed to provide a seamless and user-friendly experience. Please follow the instructions below to begin the assessment.
 
-- **Documentation:** Get started with our comprehensive [Chainlit Documentation](https://docs.chainlit.io) 📚
-- **Discord Community:** Join our friendly [Chainlit Discord](https://discord.gg/k73SQ3FyUh) to ask questions, share your projects, and connect with other developers! 💬
+### Instructions:
 
-We can't wait to see what you create with Chainlit! Happy coding! 💻😊
+1. **Chat Initialization:**
+   - To start the chat, simply type your first message in the chat window and press "Enter."
+   - The chatbot will respond and guide you through the assessment process.
 
-## Welcome screen
+2. **User Authentication:**
+   - If you are a registered user, you can log in to access personalized services.
+   - Type "login" to initiate the login process.
 
-To modify the welcome screen, edit the `chainlit.md` file at the root of your project. If you do not want a welcome screen, just leave this file empty.
+3. **Assessment Process:**
+   - The chatbot will ask a series of questions to assess your eligibility for social care services.
+   - Answer each question honestly and to the best of your knowledge.
+
+4. **Context Retention:**
+   - The chatbot remembers your previous answers to provide a context-aware conversation.
+   - Feel free to ask for a transcript at any time.
+
+5. **Transcript Request:**
+   - To receive a transcript of your chat session, type "transcript" at any point during the conversation.
+
+6. **Ending the Chat:**
+   - When you're ready to end the chat, type "end" to conclude the session.
+
+### Important Notes:
+
+- This chatbot is designed for informational purposes and does not replace professional advice.
+- Your privacy is our priority. All data is handled securely and in compliance with applicable regulations.
+- If you encounter any issues or have feedback, type "help" for assistance.
+
+## Thank you for choosing the Social Care Chatbot! We are here to help you through the social care assessment process.

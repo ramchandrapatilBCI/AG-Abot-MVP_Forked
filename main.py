@@ -7,7 +7,7 @@ from typing import Any
 
 import chainlit as cl
 from openai import AsyncAzureOpenAI
-
+import asyncio
 from chainlit import Message, Action
 from dotenv import load_dotenv
 from langchain import PromptTemplate
@@ -340,11 +340,12 @@ After the assessment we will tell you exactly what you will need to pay. You are
 # @cl.action_callback("end_chat")
 async def send_msg(res):
     msg: Message = cl.Message(content="")
+    await msg.send()
     token_list: list[Any] = re.findall(pattern=r'\S+|\n', string=res)
     for token in token_list:
         await msg.stream_token(token=f'{token} ')
-        time.sleep(0.06)
-    await msg.send()
+        await asyncio.sleep(0.06)
+    await msg.update()
 
 
 async def on_action() -> None:
@@ -390,13 +391,16 @@ def main():
 
 
 @cl.on_message
-async def main(message: str):
+async def main(message):
     global user
+    msg: Message = cl.Message(content="")
+    await msg.send()
+    await asyncio.sleep(0.06)
     llm_chain: ConversationChain = cl.user_session.get("llm_chain")
     try:
         res: dict[str, Any] = await llm_chain.acall(message.content, callbacks=[
             cl.AsyncLangchainCallbackHandler(stream_final_answer=True)])
-    except:
+    except ValueError:
         res: dict[str, Any] = await llm_chain.acall(message, callbacks=[
             cl.AsyncLangchainCallbackHandler(stream_final_answer=True)])
     print(type(llm_chain.prompt))
@@ -414,12 +418,11 @@ async def main(message: str):
         await main("Start")
     elif 'Assessment Complete' in res["response"]:
         response = res["response"]
-        msg: Message = cl.Message(content="")
         token_list: list[Any] = re.findall(pattern=r'\S+|\n', string=response.replace(' Assessment Complete.', ''))
         for token in token_list:
             await msg.stream_token(token=f'{token} ')
-            time.sleep(0.06)
-        await msg.send()
+            await asyncio.sleep(0.06)
+        await msg.update()
         await on_action()
         # await cl.Message(content='Done').send()
     else:
