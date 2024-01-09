@@ -5,7 +5,7 @@ from langchain.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import Runnable
 from langchain.schema.runnable.config import RunnableConfig
-
+from typing import Dict, Optional
 from langchain_community.chat_message_histories import RedisChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -17,6 +17,18 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path='venv/.env')
 
 REDIS_URL = os.getenv('REDIS_URL')
+
+
+@cl.oauth_callback
+def oauth_callback(
+  provider_id: str,
+  token: str,
+  raw_user_data: Dict[str, str],
+  default_user: cl.User,
+) -> Optional[cl.User]:
+  return default_user
+
+
 @cl.on_chat_start
 async def on_chat_start():
     model = AzureChatOpenAI(
