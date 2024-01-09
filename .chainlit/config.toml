@@ -17,7 +17,7 @@ cache = false
 [features]
 prompt_playground = true
 multi_modal = false
-unsafe_allow_html = true
+unsafe_allow_html = false
 latex = false
 
 [features.speech_to_text]
@@ -38,7 +38,7 @@ default_collapse_content = true
 default_expand_messages = false
 
 # Hide the chain of thought details from the user in the UI.
-hide_cot = true
+hide_cot = false
 
 # Link to your github repo. This will add a github button in the UI's header.
 # github = ""
