@@ -21,20 +21,26 @@ REDIS_URL = os.getenv('REDIS_URL')
 
 @cl.oauth_callback
 def oauth_callback(
-  provider_id: str,
-  token: str,
-  raw_user_data: Dict[str, str],
-  default_user: cl.User,
+        provider_id: str,
+        token: str,
+        raw_user_data: Dict[str, str],
+        default_user: cl.User,
 ) -> Optional[cl.User]:
-  return default_user
+    return default_user
+
+
+PROMPT = '''
+
+'''
 
 
 @cl.on_chat_start
 async def on_chat_start():
+    app_user = cl.user_session.get("user")
     model = AzureChatOpenAI(
-            azure_deployment="gpt-4-1106",
-            openai_api_version="2023-09-01-preview",
-        )
+        azure_deployment="gpt-4-1106",
+        openai_api_version="2023-09-01-preview",
+    )
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", "You're an assistant who's good at {ability}"),
@@ -50,18 +56,19 @@ async def on_chat_start():
         history_messages_key="history",
     )
     cl.user_session.set("runnable", runnable)
+    cl.user_session.set("user", app_user)
 
 
 @cl.on_message
 async def on_message(message: cl.Message):
     runnable = cl.user_session.get("runnable")  # type: Runnable
-
+    user = cl.user_session.get("user")
     msg = cl.Message(content="")
 
     async for chunk in runnable.astream(
-        {"ability": "math", "question": message.content},
-        config=RunnableConfig(callbacks=[cl.AsyncLangchainCallbackHandler()],
-                              configurable={"session_id": "foobar"})
+            {"ability": "math", "question": message.content},
+            config=RunnableConfig(callbacks=[cl.AsyncLangchainCallbackHandler()],
+                                  configurable={"session_id": user})
     ):
         await msg.stream_token(chunk)
 
