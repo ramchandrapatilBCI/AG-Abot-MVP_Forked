@@ -36,7 +36,6 @@ PROMPT = '''
 
 @cl.on_chat_start
 async def on_chat_start():
-    app_user = cl.user_session.get("user")
     model = AzureChatOpenAI(
         azure_deployment="gpt-4-1106",
         openai_api_version="2023-09-01-preview",
@@ -56,19 +55,18 @@ async def on_chat_start():
         history_messages_key="history",
     )
     cl.user_session.set("runnable", runnable)
-    cl.user_session.set("user", app_user)
 
 
 @cl.on_message
 async def on_message(message: cl.Message):
     runnable = cl.user_session.get("runnable")  # type: Runnable
-    user = cl.user_session.get("user")
+    id = cl.user_session.get("id")
     msg = cl.Message(content="")
 
     async for chunk in runnable.astream(
             {"ability": "math", "question": message.content},
             config=RunnableConfig(callbacks=[cl.AsyncLangchainCallbackHandler()],
-                                  configurable={"session_id": user})
+                                  configurable={"session_id": id})
     ):
         await msg.stream_token(chunk)
 
