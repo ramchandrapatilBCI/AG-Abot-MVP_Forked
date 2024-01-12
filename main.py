@@ -126,7 +126,7 @@ async def on_message(message: cl.Message):
     id = cl.user_session.get("id")
     msg = cl.Message(content="")
     if message.content == '\\transcript':
-        await cl.Message(content=runnable.get_session_history(id))
+        await cl.Message(content=runnable.get_session_history(id)).send()
     else:
         async for chunk in runnable.astream(
                 {"question": message.content},
