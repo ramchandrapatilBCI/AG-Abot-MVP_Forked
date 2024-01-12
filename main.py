@@ -133,3 +133,8 @@ async def on_message(message: cl.Message):
         await msg.stream_token(chunk)
 
     await msg.send()
+
+
+@cl.on_chat_end
+def on_chat_end():
+    print("Chat disconnected due to timeout!")
