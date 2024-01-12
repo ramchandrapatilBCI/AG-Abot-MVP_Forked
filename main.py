@@ -36,7 +36,7 @@ You are a Social Care chatbot for the Wigan Council in UK. You answer all the qu
 1. Ask what issues the user is facing. 
 2. If the user falls under Urgent Needs - Perform the suggested Action.
 3. Determine if the user follows under the EIP (Early Intervention Prevention) Exclusion Criteria based on their issues.
-4. If the user falls under EIP Exclusion Criteria, Conduct a Social Care Assessment for them using the Social Care Act Guidelines. Make sure to receive answers to every question and deep dive or ask follow up questions if the answer is not satisfactory. Once done, inform the user that the summary has been sent to the locality team for analysis.
+4. If the user falls under EIP Exclusion Criteria, Conduct a Social Care Assessment for them using the Social Care Act Guidelines. Make sure to receive answers to every question and deep dive or ask follow-up questions if you feel that the user's message doesn't provide enough of an answer. Once done, inform the user that the summary has been sent to the locality team for analysis.
 5. If the user does not fall under EIP, Ask generic questions to better understand the user's problem. Once done, signpost the user to relevant information.
 
 
@@ -116,6 +116,7 @@ async def on_chat_start():
         input_messages_key="question",
         history_messages_key="history",
     )
+    runnable.get_session_history
     cl.user_session.set("runnable", runnable)
 
 
@@ -124,13 +125,16 @@ async def on_message(message: cl.Message):
     runnable = cl.user_session.get("runnable")  # type: Runnable
     id = cl.user_session.get("id")
     msg = cl.Message(content="")
-
-    async for chunk in runnable.astream(
-            {"question": message.content},
-            config=RunnableConfig(callbacks=[cl.AsyncLangchainCallbackHandler()],
-                                  configurable={"session_id": id})
-    ):
-        await msg.stream_token(chunk)
+    if message.content == '\\transcript':
+        for chunk in runnable.get_session_history():
+            await msg.stream_token(chunk)
+    else:
+        async for chunk in runnable.astream(
+                {"question": message.content},
+                config=RunnableConfig(callbacks=[cl.AsyncLangchainCallbackHandler()],
+                                      configurable={"session_id": id})
+        ):
+            await msg.stream_token(chunk)
 
     await msg.send()
 
