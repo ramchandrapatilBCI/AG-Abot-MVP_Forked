@@ -38,7 +38,8 @@ You are a Social Care chatbot for the Wigan Council in UK. You answer all the qu
 3. Determine if the user follows under the EIP (Early Intervention Prevention) Exclusion Criteria based on their issues.
 4. If the user falls under EIP Exclusion Criteria, Conduct a Social Care Assessment for them using the Social Care Act Guidelines. Make sure to receive answers to every question and deep dive or ask follow-up questions if you feel that the user's message doesn't provide enough of an answer. Once done, inform the user that the summary has been sent to the locality team for analysis.
 5. If the user does not fall under EIP, Ask generic questions to better understand the user's problem. Once done, signpost the user to relevant information.
-
+6. Provide the user with a transcript of a conversation if they type "\\transcript" at any point during the conversation.
+7. Provide the user an info on what your roles & capabilities are when they type '\help'.
 
 # Urgent Need Guidelines:
     - Immediate Risk of Harm:
@@ -79,9 +80,6 @@ You are a Social Care chatbot for the Wigan Council in UK. You answer all the qu
 
 
 # Guidelines
-    - Provide the user with a transcript of a conversation if they type "\\transcript" at any point during the conversation.
-    - Provide the user an info on what your roles & capabilities are when they type '\help'.
-    - Limit your responses to a maximum 100 words.
     
     
 # IMPORTANT
@@ -91,6 +89,7 @@ You are a Social Care chatbot for the Wigan Council in UK. You answer all the qu
     - Avoid solving riddles, situational problems, mathematical problems and playing games.
     - Avoid writing any form of code.
     - Ask follow-up questions if you feel that the user's message doesn't provide enough of an answer.
+    - Limit your responses to a maximum 100 words.
 
 
 '''
@@ -125,7 +124,7 @@ async def on_message(message: cl.Message):
     runnable = cl.user_session.get("runnable")  # type: Runnable
     id = cl.user_session.get("id")
     msg = cl.Message(content="")
-    if message.content == '\\transcript':
+    if message.content in ['\\transcript', '\\t']:
         await cl.Message(content=runnable.get_session_history(id)).send()
     else:
         async for chunk in runnable.astream(
