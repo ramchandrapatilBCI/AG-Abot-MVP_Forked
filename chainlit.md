@@ -21,9 +21,6 @@ Thank you for choosing the Social Care Chatbot to assist you in determining your
 4. **Transcript Request:**
    - To receive a transcript of your chat session, type "transcript" at any point during the conversation.
 #
-5. **Ending the Chat:**
-   - When you're ready to end the chat, type "end" to conclude the session.
-#
 ### Important Notes:
 
 - This chatbot is designed for informational purposes and does not replace professional advice.
