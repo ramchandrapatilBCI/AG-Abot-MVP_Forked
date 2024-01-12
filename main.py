@@ -116,6 +116,7 @@ async def on_chat_start():
         input_messages_key="question",
         history_messages_key="history",
     )
+
     cl.user_session.set("runnable", runnable)
 
 
@@ -125,8 +126,7 @@ async def on_message(message: cl.Message):
     id = cl.user_session.get("id")
     msg = cl.Message(content="")
     if message.content == '\\transcript':
-        for chunk in runnable.get_session_history(id):
-            await msg.stream_token(chunk)
+        await cl.Message(content=runnable.get_session_history(id))
     else:
         async for chunk in runnable.astream(
                 {"question": message.content},
