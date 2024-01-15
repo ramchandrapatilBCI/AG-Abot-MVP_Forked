@@ -124,8 +124,6 @@ async def on_message(message: cl.Message):
     runnable = cl.user_session.get("runnable")  # type: Runnable
     user_id = cl.user_session.get("id")
     end, transcript = cl.user_session.get('end'), cl.user_session.get('transcript')
-    end.remove()
-    transcript.remove()
     if end:
         end.remove()
     if transcript:
