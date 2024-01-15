@@ -10,7 +10,7 @@ from langchain_community.chat_message_histories import RedisChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
-
+import uuid
 import chainlit as cl
 from dotenv import load_dotenv
 
@@ -124,8 +124,8 @@ async def on_message(message: cl.Message):
     runnable = cl.user_session.get("runnable")  # type: Runnable
     user_id = cl.user_session.get("id")
     actions = [
-        cl.Action(name="end_button", value="End", description="End chat"),
-        cl.Action(name="transcript_button", value="transcript", description="Transcript")
+        cl.Action(name="End chat", value="End", description="End chat"),
+        cl.Action(name="Transcript", value="transcript", description="Transcript")
     ]
     msg = cl.Message(content="", actions=actions)
     if message.content in ['\\transcript', '\\t']:
@@ -141,12 +141,13 @@ async def on_message(message: cl.Message):
     await msg.send()
 
 
-@cl.action_callback("end_button")
+@cl.action_callback("End chat")
 async def on_action_end(action: cl.Action):
+    cl.user_session.set("id", str(uuid.uuid4()))
     await cl.Message(content="Chat ended!").send()
 
 
-@cl.action_callback("transcript_button")
+@cl.action_callback("Transcript")
 async def on_action_transcript(action: cl.Action):
     runnable = cl.user_session.get("runnable")
     user_id = cl.user_session.get("id")
