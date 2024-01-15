@@ -6,10 +6,10 @@ enable_telemetry = false
 user_env = []
 
 # Duration (in seconds) during which the session is saved when the connection is lost
-session_timeout = 3600
+session_timeout = 9999999
 
 # Enable third parties caching (e.g LangChain cache)
-cache = false
+cache = true
 
 # Follow symlink for asset mount (see https://github.com/Chainlit/chainlit/issues/317)
 # follow_symlink = false
@@ -25,7 +25,7 @@ latex = false
 
 [UI]
 # Name of the app and chatbot.
-name = "Chatbot"
+name = "Abot"
 custom_css = '/public/stylesheet.css'
 
 # Description of the app and chatbot. This is used for HTML tags.
@@ -56,9 +56,9 @@ hide_cot = false
     #paper = "#FFFFFF"
 
     [UI.theme.light.primary]
-        #main = "#F80061"
-        #dark = "#980039"
-        #light = "#FFE7EB"
+        main = "#a3c441"
+        dark = "#5c7a00"
+        light = "#f7ffde"
 
 # Override default MUI dark theme. (Check theme.ts)
 [UI.theme.dark]
@@ -66,9 +66,9 @@ hide_cot = false
     #paper = "#FFFFFF"
 
     [UI.theme.dark.primary]
-        #main = "#F80061"
-        #dark = "#980039"
-        #light = "#FFE7EB"
+        main = "#a3c441"
+        dark = "#5c7a00"
+        light = "#f7ffde"
 
 
 [meta]
