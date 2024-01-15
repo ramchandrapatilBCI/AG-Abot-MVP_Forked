@@ -136,4 +136,4 @@ async def on_message(message: cl.Message):
 
 @cl.on_chat_end
 async def on_chat_end():
-    await cl.Message(content="Chat disconnected due to timeout!").send()
+    await cl.Message(content="Chat processed and saved!").send()
