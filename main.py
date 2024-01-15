@@ -37,12 +37,11 @@ You are a Social Care chatbot for the Wigan Council in UK. You answer all the qu
 -Step 2. Check if Wigan Council their local authority.
 -Step 3. Check if they or the person they are enquiring for 18 years old or over, If no, ask them to contact Wigan Council’s Children’s services Team on 01842 828300.
 -Step 4. Check if they are already receiving services from Wigan’s Adult Social Care department. Eg home care, day services, direct payments.
--Step 2. If the user falls under Urgent Needs based on the issues highlighted in Step 1 - Perform the suggested Action.
--Step 3. Determine if the user follows under the EIP (Early Intervention Prevention) Exclusion Criteria based on their issues and the follow up questions.
--Step 4. If the user falls under EIP Exclusion Criteria, Conduct a Social Care Assessment for them using the Social Care Act Guidelines. Make sure to receive answers to every question and deep dive or ask follow-up questions if you feel that the user's message doesn't provide enough of an answer. Once done, inform the user that the summary has been sent to the locality team for analysis and that they can close the chat window.
--Step 5. If the user **does not** fall under EIP, Ask generic questions to better understand the user's problem. Once done, signpost the user to relevant information.
--Step 6. Provide the user with a transcript of a conversation if they type "\\transcript" at any point during the conversation.
--Step 7. Provide the user an info on what your roles & capabilities are when they type '\help'.
+-Step 5. If the user falls under Urgent Needs based on the issues highlighted in Step 1 - Perform the suggested Action.
+-Step 6. Determine if the user follows under the EIP (Early Intervention Prevention) Exclusion Criteria based on their issues and the follow up questions.
+-Step 7. If the user falls under EIP Exclusion Criteria, Conduct a Social Care Assessment for them using the Social Care Act Guidelines. Make sure to receive answers to every question and deep dive or ask follow-up questions if you feel that the user's message doesn't provide enough of an answer. Once done, inform the user that the summary has been sent to the locality team for analysis and that they can close the chat window.
+-Step 8. If the user **does not** fall under EIP, Ask generic questions to better understand the user's problem. Once done, signpost the user to relevant information.
+-Step 10. Provide the user an info on what your roles & capabilities are when they type '\help'.
 
 # Urgent Need Guidelines:
     - Immediate Risk of Harm:
@@ -123,19 +122,35 @@ async def on_chat_start():
 @cl.on_message
 async def on_message(message: cl.Message):
     runnable = cl.user_session.get("runnable")  # type: Runnable
-    id = cl.user_session.get("id")
-    msg = cl.Message(content="")
+    user_id = cl.user_session.get("id")
+    actions = [
+        cl.Action(name="end_button", value="End", description="End chat"),
+        cl.Action(name="transcript_button", value="transcript", description="Transcript")
+    ]
+    msg = cl.Message(content="", actions=actions)
     if message.content in ['\\transcript', '\\t']:
-        await cl.Message(content=runnable.get_session_history(id)).send()
+        await cl.Message(content=runnable.get_session_history(user_id)).send()
     else:
         async for chunk in runnable.astream(
                 {"question": message.content},
                 config=RunnableConfig(callbacks=[cl.AsyncLangchainCallbackHandler()],
-                                      configurable={"session_id": id})
+                                      configurable={"session_id": user_id})
         ):
             await msg.stream_token(chunk)
 
     await msg.send()
+
+
+@cl.action_callback("end_button")
+async def on_action_end(action: cl.Action):
+    await cl.Message(content="Chat ended!").send()
+
+
+@cl.action_callback("transcript_button")
+async def on_action_transcript(action: cl.Action):
+    runnable = cl.user_session.get("runnable")
+    user_id = cl.user_session.get("id")
+    await cl.Message(content=runnable.get_session_history(user_id)).send()
 
 
 @cl.on_chat_end
