@@ -124,8 +124,12 @@ async def on_message(message: cl.Message):
     runnable = cl.user_session.get("runnable")  # type: Runnable
     user_id = cl.user_session.get("id")
     end, transcript = cl.user_session.get('end'), cl.user_session.get('transcript')
-    if end: end.remove()
-    if transcript: transcript.remove()
+    end.remove()
+    transcript.remove()
+    if end:
+        end.remove()
+    if transcript:
+        transcript.remove()
     end = cl.Action(name="End chat", value="End", description="End chat")
     transcript = cl.Action(name="Transcript", value="transcript", description="Transcript")
     actions = [
