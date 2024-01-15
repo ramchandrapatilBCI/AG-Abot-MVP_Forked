@@ -1,13 +1,11 @@
 import os
 
 from langchain.chat_models import AzureChatOpenAI
-from langchain.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import Runnable
 from langchain.schema.runnable.config import RunnableConfig
 from typing import Dict, Optional
 from langchain_community.chat_message_histories import RedisChatMessageHistory
-from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 import uuid
@@ -90,6 +88,8 @@ You are a Social Care chatbot for the Wigan Council in UK. You answer all the qu
     - Ask follow-up questions if you feel that the user's message doesn't provide enough of an answer.
     - Limit your responses to a maximum 100 words.
     - Once complete, inform the user that they can close the chat window or start a new chat using the 'New Chat' button.
+    - Talk to the user like you would talk to a 9 year old (Simple, and easy to understand with brief responses and one question at a time)
+    - Only converse in English.
 
 
 '''
@@ -123,9 +123,13 @@ async def on_chat_start():
 async def on_message(message: cl.Message):
     runnable = cl.user_session.get("runnable")  # type: Runnable
     user_id = cl.user_session.get("id")
+    end, transcript = cl.user_session.get('end'), cl.user_session.get('transcript')
+    if end: end.remove()
+    if transcript: transcript.remove()
+    end = cl.Action(name="End chat", value="End", description="End chat")
+    transcript = cl.Action(name="Transcript", value="transcript", description="Transcript")
     actions = [
-        cl.Action(name="End chat", value="End", description="End chat"),
-        cl.Action(name="Transcript", value="transcript", description="Transcript")
+        end, transcript
     ]
     msg = cl.Message(content="", actions=actions)
     if message.content in ['\\transcript', '\\t']:
@@ -139,12 +143,15 @@ async def on_message(message: cl.Message):
             await msg.stream_token(chunk)
 
     await msg.send()
+    cl.user_session.set('end', end)
+    cl.user_session.set('transcript', transcript)
 
 
 @cl.action_callback("End chat")
 async def on_action_end(action: cl.Action):
     cl.user_session.set("id", str(uuid.uuid4()))
     await cl.Message(content="Chat ended!").send()
+    await action.remove()
 
 
 @cl.action_callback("Transcript")
@@ -152,6 +159,7 @@ async def on_action_transcript(action: cl.Action):
     runnable = cl.user_session.get("runnable")
     user_id = cl.user_session.get("id")
     await cl.Message(content=runnable.get_session_history(user_id)).send()
+    await action.remove()
 
 
 @cl.on_chat_end
