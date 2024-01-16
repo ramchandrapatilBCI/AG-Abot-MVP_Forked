@@ -1,7 +1,7 @@
 import os
 
 from langchain.chat_models import AzureChatOpenAI
-from langchain_openai import ChatOpenAI
+from langchain_openai import AzureOpenAI
 from langchain.chains.openai_functions import create_openai_fn_runnable
 from langchain_core.pydantic_v1 import BaseModel, Field, UUID4
 from langchain.schema import StrOutputParser
@@ -35,6 +35,7 @@ def oauth_callback(
         default_user: cl.User,
 ) -> Optional[cl.User]:
     return default_user
+
 
 CHAT_INFO_PROMPT = '''
 You are a Social-Care Chat Transcript Analyser. You are to analyse a given transcript and provide the details in the given format. 
@@ -216,7 +217,8 @@ class ChatInfo(BaseModel):
     chat_summary: str = Field(..., description="Summary of the chat")
     category: str = Field(..., description="Category of the chat (EIP/SC/Urgent Needs/General Queries)")
     severity: str = Field(..., description="Severity of the issue highlighted by the user")
-    social_care_eligibility: Optional[str] = Field(None, description="Eligibility for social care (if applicable else NaN)")
+    social_care_eligibility: Optional[str] = Field(None,
+                                                   description="Eligibility for social care (if applicable else NaN)")
     suggested_course_of_action: str = Field(..., description="Suggested course of action from the transcript")
     next_steps: str = Field(..., description="Suggest next steps to the assessor")
     contact_request: str = Field(..., description="Whether the user has requested for Contact (Yes/No)")
@@ -251,7 +253,8 @@ async def chat_records():
 
 
 async def get_chat_info(session_id):
-    llm = ChatOpenAI(model="gpt-3.5-turbo-1106")
+    llm = AzureOpenAI(azure_deployment="gpt-4-1106",
+                      openai_api_version="2023-09-01-preview", )
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", CHAT_INFO_PROMPT),
@@ -262,4 +265,3 @@ async def get_chat_info(session_id):
     transcript = cl.user_session.get("runnable").get_session_history(session_id)
     chain = create_openai_fn_runnable([ChatInfo], llm, prompt)
     return chain.invoke({"input": transcript})
-
