@@ -214,7 +214,7 @@ class ChatInfo(BaseModel):
 
     chat_summary: str = Field(..., description="Summary of the chat")
     category: str = Field(..., description="Category of the chat (EIP/SC/Urgent Needs/General Queries)")
-    severity: str = Field(..., description="Severity of the issue highlighted by the user")
+    severity: str = Field(..., description="Severity of the issue highlighted by the user(High/Medium/Low)")
     social_care_eligibility: Optional[str] = Field(None,
                                                    description="Eligibility for social care (if applicable else NaN)")
     suggested_course_of_action: str = Field(..., description="Suggested course of action from the transcript")
@@ -242,9 +242,10 @@ async def chat_records():
     """
 
     values = (
-        session_id, str(name), str(email_or_phone_number), datetime_of_chat, chat_duration, str(chat_transcript),
-        chat_info.chat_summary, chat_info.category, chat_info.severity, chat_info.social_care_eligibility,
-        chat_info.suggested_course_of_action, chat_info.next_steps, chat_info.contact_request, chat_info.status
+        session_id, name.identifier, email_or_phone_number.identifier, datetime_of_chat, chat_duration,
+        str(chat_transcript), chat_info.chat_summary, chat_info.category, chat_info.severity,
+        chat_info.social_care_eligibility, chat_info.suggested_course_of_action, chat_info.next_steps,
+        chat_info.contact_request, chat_info.status
     )
 
     return insert_query, values
