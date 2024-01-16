@@ -196,7 +196,6 @@ async def on_action_transcript(action: cl.Action):
 @cl.on_chat_end
 async def on_chat_end():
     conn = await init_db()
-    cursor = conn.cursor()
     insert_query, values = await chat_records()
     await conn.execute(insert_query, *values)
     # Close the connection
