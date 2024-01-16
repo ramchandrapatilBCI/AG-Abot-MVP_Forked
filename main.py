@@ -136,14 +136,18 @@ async def on_message(message: cl.Message):
     if message.content in ['\\transcript', '\\t']:
         await cl.Message(content=runnable.get_session_history(user_id)).send()
     else:
-        async for chunk in runnable.astream(
-                {"question": message.content},
-                config=RunnableConfig(callbacks=[cl.AsyncLangchainCallbackHandler()],
-                                      configurable={"session_id": user_id})
-        ):
-            await msg.stream_token(chunk)
+        try:
+            async for chunk in runnable.astream(
+                    {"question": message.content},
+                    config=RunnableConfig(callbacks=[cl.AsyncLangchainCallbackHandler()],
+                                          configurable={"session_id": user_id})
+            ):
+                await msg.stream_token(chunk)
 
-    await msg.send()
+            await msg.send()
+        except:
+            await cl.Message(content="I'm sorry, but your message has been flagged as containing harmful content by our content moderation policy. Please re-write your message and try again.").send()
+
     cl.user_session.set('end', end)
     cl.user_session.set('transcript', transcript)
 
