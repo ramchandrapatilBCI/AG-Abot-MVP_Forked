@@ -204,7 +204,6 @@ async def on_chat_end():
     await cl.Message(content="Chat processed and saved!").send()
 
 
-@cl.cache
 async def init_db():
     cnx = await asyncpg.connect(user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE)
     return cnx
