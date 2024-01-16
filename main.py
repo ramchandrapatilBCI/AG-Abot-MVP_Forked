@@ -253,12 +253,13 @@ async def chat_records():
 
 
 async def get_chat_info(session_id):
-    llm = AzureOpenAI(azure_deployment="gpt-4-1106",
-                      openai_api_version="2023-09-01-preview", )
+    llm = AzureChatOpenAI(azure_deployment="gpt-4-1106",
+                          openai_api_version="2023-09-01-preview", )
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", CHAT_INFO_PROMPT),
-            ("human", "Make calls to the relevant function to record the entities in the following transcript: {input}"),
+            ("human", "Make calls to the relevant function to record the entities in the "
+                      "following transcript: {input}"),
             ("human", "Tip: Make sure to answer in the correct format"),
         ]
     )
