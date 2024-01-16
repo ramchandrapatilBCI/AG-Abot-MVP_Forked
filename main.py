@@ -249,8 +249,8 @@ async def on_action_transcript(action: cl.Action):
 @cl.on_chat_end
 async def on_chat_end():
     session_id = cl.user_session.get('id')
-    if str(cl.user_session.get("runnable").get_session_history(session_id)) is None :
-        await cl.Message(content="Chat timed out!").send()
+    if str(cl.user_session.get("runnable").get_session_history(session_id)) == "":
+        pass
     else:
         await cl.Message(content="Processing...").send()
         conn = await init_db()
