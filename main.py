@@ -146,7 +146,14 @@ async def on_message(message: cl.Message):
 
             await msg.send()
         except:
-            await cl.Message(content="I'm sorry, but your message has been flagged as containing harmful content by our content moderation policy. Please re-write your message and try again.").send()
+            if "'self_harm': {'filtered': True, 'severity': 'medium'}" or "'self_harm': {'filtered': True, 'severity': 'high'}" in message.content:
+                await cl.Message(
+                    content="It looks like your message mentions self-harm. If you, or someone you know, is at risk or is experiencing self-harm, please contact the emergency services immediately.").send()
+            elif "'violence': {'filtered': True, 'severity': 'medium'}" or "'violence': {'filtered': True, 'severity': 'high'}" in message.content:
+                await cl.Message(
+                    content="It looks like your message mentions violence. If you, or someone you know, is at risk or is experiencing violence, please contact the emergency services immediately.").send()
+            else:
+                await cl.Message(content="I'm sorry, but your message has been flagged as containing harmful content by our content moderation policy. Please re-write your message and try again.").send()
 
     cl.user_session.set('end', end)
     cl.user_session.set('transcript', transcript)
