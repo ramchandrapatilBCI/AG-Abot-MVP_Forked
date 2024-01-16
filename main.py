@@ -15,7 +15,7 @@ import uuid
 from datetime import datetime
 import chainlit as cl
 from dotenv import load_dotenv
-import psycopg2
+import asyncpg
 
 load_dotenv(dotenv_path='venv/.env')
 
@@ -198,16 +198,15 @@ async def on_chat_end():
     conn = await init_db()
     cursor = conn.cursor()
     insert_query, values = await chat_records()
-    cursor.execute(insert_query, values)
-    conn.commit()
-    cursor.close()
-    conn.close()
+    await conn.execute(insert_query, *values)
+    # Close the connection
+    await conn.close()
     await cl.Message(content="Chat processed and saved!").send()
 
 
 @cl.cache
 async def init_db():
-    cnx = psycopg2.connect(user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE)
+    cnx = await asyncpg.connect(user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE)
     return cnx
 
 
@@ -239,7 +238,7 @@ async def chat_records():
             ChatSummary, Category, Severity, SocialCareEligibility, SuggestedCourseOfAction,
             NextSteps, ContactRequest, Status
         ) VALUES (
-            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
         );
     """
 
@@ -254,7 +253,7 @@ async def chat_records():
 
 async def get_chat_info(session_id):
     llm = AzureChatOpenAI(azure_deployment="gpt-4-1106",
-                          openai_api_version="2023-09-01-preview", )
+                          openai_api_version="2023-09-01-preview")
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", CHAT_INFO_PROMPT),
@@ -265,4 +264,4 @@ async def get_chat_info(session_id):
     )
     transcript = cl.user_session.get("runnable").get_session_history(session_id)
     chain = create_openai_fn_runnable([ChatInfo], llm, prompt)
-    return chain.invoke({"input": transcript})
+    return await chain.ainvoke({"input": transcript})
