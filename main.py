@@ -37,8 +37,61 @@ def oauth_callback(
     return default_user
 
 
+class ChatInfo(BaseModel):
+    """Represents a chat record."""
+
+    chat_summary: str = Field(..., description="Summary of the chat")
+    category: str = Field(..., description="Category of the chat based on the guidelines provided earlier (EIP/SC/"
+                                           "Urgent Needs/General Queries)")
+    severity: str = Field(..., description="Severity of the issue highlighted by the user(High/Medium/Low)")
+    social_care_eligibility: Optional[str] = Field(None,
+                                                   description="Eligibility for social care (if applicable, score based"
+                                                               " on the Social Care guidelines given out of 9, if score"
+                                                               " greater than 2 then Yes else No. If not applicable "
+                                                               "then NaN)")
+    suggested_course_of_action: str = Field(..., description="Suggested course of action from the transcript")
+    next_steps: str = Field(..., description="Suggest next steps to the assessor")
+    contact_request: str = Field(..., description="Whether the user has requested for Contact (Yes/No)")
+    status: str = Field(..., description="Status of the chat (Completed/Incomplete)")
+
+
 CHAT_INFO_PROMPT = '''
-You are a Social-Care Chat Transcript Analyser. You are to analyse a given transcript and provide the details in the given format. 
+You are a Social-Care Chat Transcript Analyser. You are to analyse a given transcript and provide the details in the given format.
+Below are the guidelines for individual scoring.
+If the user's issue falls within the EIP Exclusion Criteria -> They fall under Social Care Assessment.
+If the user's issue **does not** fall within the EIP Exclusion Criteria -> They fall under EIP.
+
+# Urgent Need Guidelines:
+    - Immediate Risk of Harm:
+        Criteria: User or someone they know is at immediate risk from harm.  
+    - Concerns about Health:
+        Criteria: The user concerned about someone's health in general. 
+    - Social Care Emergency:
+        Criteria: The user has any social care emergency and needs immediate assistance
+    - Homelessness Situation:
+        Criteria: The User has found that they are homeless
+        
+# EIP (Early Intervention Prevention) Exclusion Criteria:
+    - Person immediately end of life – needing support
+    - Safeguarding
+    - Night support required
+    - Person only requires a period of respite
+    - Request for poc/ support at home – funded via Continuing Health Care
+    - Minor tweaks to an existing POC
+    - Person in long term residential / nursing setting
+    - Request for moving and handling assessment / re-assessment by formal carers
+    
+# Social Care Act Guidelines
+    - Check if the User has access to sufficient food and drink to maintain nutrition and can independently prepare and consume meals.
+    - Check if the User is capable of washing themselves and laundering their clothes without assistance.
+    - Check if the User can independently access and use the toilet, managing their own toilet needs without support.
+    - Check if the User can dress themselves appropriately for various activities and weather conditions, including work or volunteering commitments.
+    - Check if the User can move around their home safely, which includes climbing steps, using kitchen facilities, and accessing the bathroom/toilet. This extends to their immediate environment, such as steps leading to the home.
+    - Check if the User's home is adequately clean and maintained for safety, with essential amenities available. Ensure there is no need for support to sustain the home, and the User can manage utilities, rent, or mortgage payments independently.
+    - Check if the User is not lonely or isolated, and their needs do not hinder them from maintaining or developing relationships with family and friends.
+    - Check if the User has the opportunity and expresses a desire to contribute to society through work, training, education, or volunteering. Confirm they have physical access to relevant facilities and receive support for participation in these activities.
+    - Check if the User can navigate the community safely, accessing facilities such as public transport, shops, and recreational areas. Verify they can attend healthcare appointments independently or with necessary support.
+
 '''
 
 PROMPT = '''
@@ -207,21 +260,6 @@ async def on_chat_end():
 async def init_db():
     cnx = await asyncpg.connect(user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE)
     return cnx
-
-
-class ChatInfo(BaseModel):
-    """Represents a chat record."""
-
-    chat_summary: str = Field(..., description="Summary of the chat")
-    category: str = Field(..., description="Category of the chat (EIP/SC/Urgent Needs/General Queries)")
-    severity: str = Field(..., description="Severity of the issue highlighted by the user(High/Medium/Low)")
-    social_care_eligibility: Optional[str] = Field(None,
-                                                   description="Eligibility for social care (if applicable else NaN)")
-    suggested_course_of_action: str = Field(..., description="Suggested course of action from the transcript")
-    next_steps: str = Field(..., description="Suggest next steps to the assessor")
-    contact_request: str = Field(..., description="Whether the user has requested for Contact (Yes/No)")
-    status: str = Field(..., description="Status of the chat (Completed/Incomplete)")
-
 
 async def chat_records():
     session_id = cl.user_session.get('id')
