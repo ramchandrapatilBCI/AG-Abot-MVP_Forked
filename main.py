@@ -41,8 +41,8 @@ class ChatInfo(BaseModel):
     """Represents a chat record."""
 
     chat_summary: str = Field(..., description="Summary of the chat")
-    category: str = Field(..., description="Category of the chat based on the guidelines provided earlier (EIP/SC/"
-                                           "Urgent Needs/General Queries)")
+    category: str = Field(..., description="Category of the chat based on the guidelines provided earlier (EIP/Social Care/"
+                                           "Urgent Needs/General Queries/Not enough Information)")
     severity: str = Field(..., description="Severity of the issue highlighted by the user(High/Medium/Low)")
     social_care_eligibility: Optional[str] = Field(None,
                                                    description="Eligibility for social care (if applicable, score based"
