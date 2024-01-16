@@ -59,7 +59,7 @@ async def lifespan(app: FastAPI):
     port = config.run.port
 
     if host == DEFAULT_HOST:
-        url = f"https://localhost:{port}"
+        url = f"http://localhost:{port}"
     else:
         url = f"https://{host}:{port}"
 

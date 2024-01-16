@@ -242,7 +242,7 @@ async def chat_records():
     """
 
     values = (
-        session_id, name, email_or_phone_number, datetime_of_chat, chat_duration, chat_transcript,
+        session_id, str(name), str(email_or_phone_number), datetime_of_chat, chat_duration, chat_transcript,
         chat_info.chat_summary, chat_info.category, chat_info.severity, chat_info.social_care_eligibility,
         chat_info.suggested_course_of_action, chat_info.next_steps, chat_info.contact_request, chat_info.status
     )
