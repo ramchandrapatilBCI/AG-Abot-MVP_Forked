@@ -248,18 +248,23 @@ async def on_action_transcript(action: cl.Action):
 
 @cl.on_chat_end
 async def on_chat_end():
-    await cl.Message(content="Processing...").send()
-    conn = await init_db()
-    insert_query, values = await chat_records()
-    await conn.execute(insert_query, *values)
-    # Close the connection
-    await conn.close()
-    await cl.Message(content="Chat processed and saved!").send()
+    session_id = cl.user_session.get('id')
+    if str(cl.user_session.get("runnable").get_session_history(session_id)) is None :
+        await cl.Message(content="Chat timed out!").send()
+    else:
+        await cl.Message(content="Processing...").send()
+        conn = await init_db()
+        insert_query, values = await chat_records()
+        await conn.execute(insert_query, *values)
+        # Close the connection
+        await conn.close()
+        await cl.Message(content="Chat processed and saved!").send()
 
 
 async def init_db():
     cnx = await asyncpg.connect(user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE)
     return cnx
+
 
 async def chat_records():
     session_id = cl.user_session.get('id')
