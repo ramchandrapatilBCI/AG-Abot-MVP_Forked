@@ -110,6 +110,7 @@ async def on_message(message: cl.Message):
 
 @cl.action_callback("End chat")
 async def on_action_end(action: cl.Action):
+    on_chat_end()
     await cl.Message(content="Chat ended!").send()
     await action.remove()
 
