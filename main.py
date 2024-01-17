@@ -1,6 +1,9 @@
 import os
 
 from langchain.chat_models import AzureChatOpenAI
+from langchain_openai import AzureOpenAI
+from langchain.chains.openai_functions import create_openai_fn_runnable
+from langchain_core.pydantic_v1 import BaseModel, Field, UUID4
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import Runnable
 from langchain.schema.runnable.config import RunnableConfig
@@ -9,12 +12,19 @@ from langchain_community.chat_message_histories import RedisChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 import uuid
+from datetime import datetime
 import chainlit as cl
 from dotenv import load_dotenv
+import asyncpg
 
 load_dotenv(dotenv_path='venv/.env')
 
 REDIS_URL = os.getenv('REDIS_URL')
+PGHOST = os.getenv('PGHOST')
+PGUSER = os.getenv('PGUSER')
+PGPORT = os.getenv('PGPORT')
+PGDATABASE = os.getenv('PGDATABASE')
+PGPASSWORD = os.getenv('PGPASSWORD')
 
 
 @cl.oauth_callback
@@ -26,6 +36,63 @@ def oauth_callback(
 ) -> Optional[cl.User]:
     return default_user
 
+
+class ChatInfo(BaseModel):
+    """Represents a chat record."""
+
+    chat_summary: str = Field(..., description="Summary of the chat")
+    category: str = Field(..., description="Category of the chat based on the guidelines provided earlier (EIP/Social Care/"
+                                           "Urgent Needs/General Queries/Not enough Information)")
+    severity: str = Field(..., description="Severity of the issue highlighted by the user(High/Medium/Low)")
+    social_care_eligibility: Optional[str] = Field(None,
+                                                   description="Eligibility for social care (if applicable, score based"
+                                                               " on the Social Care guidelines given out of 9, if score"
+                                                               " greater than 2 then Yes else No. If not applicable "
+                                                               "then NaN)")
+    suggested_course_of_action: str = Field(..., description="Suggested course of action from the transcript")
+    next_steps: str = Field(..., description="Suggest next steps to the assessor")
+    contact_request: str = Field(..., description="Whether the user has requested for Contact (Yes/No)")
+    status: str = Field(..., description="Status of the chat (Completed/Incomplete)")
+
+
+CHAT_INFO_PROMPT = '''
+You are a Social-Care Chat Transcript Analyser. You are to analyse a given transcript and provide the details in the given format.
+Below are the guidelines for individual scoring.
+If the user's issue falls within the EIP Exclusion Criteria -> They fall under Social Care Assessment.
+If the user's issue **does not** fall within the EIP Exclusion Criteria -> They fall under EIP.
+
+# Urgent Need Guidelines:
+    - Immediate Risk of Harm:
+        Criteria: User or someone they know is at immediate risk from harm.  
+    - Concerns about Health:
+        Criteria: The user concerned about someone's health in general. 
+    - Social Care Emergency:
+        Criteria: The user has any social care emergency and needs immediate assistance
+    - Homelessness Situation:
+        Criteria: The User has found that they are homeless
+        
+# EIP (Early Intervention Prevention) Exclusion Criteria:
+    - Person immediately end of life – needing support
+    - Safeguarding
+    - Night support required
+    - Person only requires a period of respite
+    - Request for poc/ support at home – funded via Continuing Health Care
+    - Minor tweaks to an existing POC
+    - Person in long term residential / nursing setting
+    - Request for moving and handling assessment / re-assessment by formal carers
+    
+# Social Care Act Guidelines
+    - Check if the User has access to sufficient food and drink to maintain nutrition and can independently prepare and consume meals.
+    - Check if the User is capable of washing themselves and laundering their clothes without assistance.
+    - Check if the User can independently access and use the toilet, managing their own toilet needs without support.
+    - Check if the User can dress themselves appropriately for various activities and weather conditions, including work or volunteering commitments.
+    - Check if the User can move around their home safely, which includes climbing steps, using kitchen facilities, and accessing the bathroom/toilet. This extends to their immediate environment, such as steps leading to the home.
+    - Check if the User's home is adequately clean and maintained for safety, with essential amenities available. Ensure there is no need for support to sustain the home, and the User can manage utilities, rent, or mortgage payments independently.
+    - Check if the User is not lonely or isolated, and their needs do not hinder them from maintaining or developing relationships with family and friends.
+    - Check if the User has the opportunity and expresses a desire to contribute to society through work, training, education, or volunteering. Confirm they have physical access to relevant facilities and receive support for participation in these activities.
+    - Check if the User can navigate the community safely, accessing facilities such as public transport, shops, and recreational areas. Verify they can attend healthcare appointments independently or with necessary support.
+
+'''
 
 PROMPT = '''
 You are a Social Care chatbot for the Wigan Council in UK. You answer all the queries of the user and follow the following flow of actions if the user asks for social care support:
@@ -73,7 +140,8 @@ You are a Social Care chatbot for the Wigan Council in UK. You answer all the qu
     - Check if the User can independently access and use the toilet, managing their own toilet needs without support.
     - Check if the User can dress themselves appropriately for various activities and weather conditions, including work or volunteering commitments.
     - Check if the User can move around their home safely, which includes climbing steps, using kitchen facilities, and accessing the bathroom/toilet. This extends to their immediate environment, such as steps leading to the home.
-    - Check if the User's home is adequately clean and maintained for safety, with essential amenities available. Ensure there is no need for support to sustain the home, and the User can manage utilities, rent, or mortgage payments independently.
+    - Check if the User's home is adequately clean and maintained for safety, with essential amenities available.
+    - Ensure there is no need for support to sustain the home, and the User can manage utilities, rent, or mortgage payments independently.
     - Check if the User is not lonely or isolated, and their needs do not hinder them from maintaining or developing relationships with family and friends.
     - Check if the User has the opportunity and expresses a desire to contribute to society through work, training, education, or volunteering. Confirm they have physical access to relevant facilities and receive support for participation in these activities.
     - Check if the User can navigate the community safely, accessing facilities such as public transport, shops, and recreational areas. Verify they can attend healthcare appointments independently or with necessary support.
@@ -137,21 +205,37 @@ async def on_message(message: cl.Message):
     if message.content in ['\\transcript', '\\t']:
         await cl.Message(content=runnable.get_session_history(user_id)).send()
     else:
-        async for chunk in runnable.astream(
-                {"question": message.content},
-                config=RunnableConfig(callbacks=[cl.AsyncLangchainCallbackHandler()],
-                                      configurable={"session_id": user_id})
-        ):
-            await msg.stream_token(chunk)
+        try:
+            async for chunk in runnable.astream(
+                    {"question": message.content},
+                    config=RunnableConfig(callbacks=[cl.AsyncLangchainCallbackHandler()],
+                                          configurable={"session_id": user_id})
+            ):
+                await msg.stream_token(chunk)
 
-    await msg.send()
+            await msg.send()
+        except:
+            if "'self_harm': {'filtered': True, 'severity': 'medium'}" or \
+                    "'self_harm': {'filtered': True, 'severity': 'high'}" in message.content:
+                await cl.Message(
+                    content="It looks like your message mentions self-harm. If you, or someone you know, is at risk or "
+                            "is experiencing self-harm, please contact the emergency services immediately.").send()
+            elif "'violence': {'filtered': True, 'severity': 'medium'}" or \
+                    "'violence': {'filtered': True, 'severity': 'high'}" in message.content:
+                await cl.Message(
+                    content="It looks like your message mentions violence. If you, or someone you know, is at risk or "
+                            "is experiencing violence, please contact the emergency services immediately.").send()
+            else:
+                await cl.Message(
+                    content="I'm sorry, but your message has been flagged as containing harmful content by our content "
+                            "moderation policy. Please re-write your message and try again.").send()
+
     cl.user_session.set('end', end)
     cl.user_session.set('transcript', transcript)
 
 
 @cl.action_callback("End chat")
 async def on_action_end(action: cl.Action):
-    cl.user_session.set("id", str(uuid.uuid4()))
     await cl.Message(content="Chat ended!").send()
     await action.remove()
 
@@ -166,4 +250,63 @@ async def on_action_transcript(action: cl.Action):
 
 @cl.on_chat_end
 async def on_chat_end():
-    await cl.Message(content="Chat processed and saved!").send()
+    session_id = cl.user_session.get('id')
+    if str(cl.user_session.get("runnable").get_session_history(session_id)) == "":
+        pass
+    else:
+        await cl.Message(content="Processing...").send()
+        conn = await init_db()
+        insert_query, values = await chat_records()
+        await conn.execute(insert_query, *values)
+        # Close the connection
+        await conn.close()
+        await cl.Message(content="Chat processed and saved!").send()
+
+
+async def init_db():
+    cnx = await asyncpg.connect(user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE)
+    return cnx
+
+
+async def chat_records():
+    session_id = cl.user_session.get('id')
+    name = cl.user_session.get('user')
+    email_or_phone_number = cl.user_session.get('user')
+    datetime_of_chat = datetime.now()
+    chat_duration = 30
+    chat_transcript = cl.user_session.get("runnable").get_session_history(session_id)
+    chat_info = await get_chat_info(session_id)
+    insert_query = """
+        INSERT INTO ChatRecords (
+            SessionID, Name, EmailOrPhoneNumber, DateTimeOfChat, ChatDuration, ChatTranscript,
+            ChatSummary, Category, Severity, SocialCareEligibility, SuggestedCourseOfAction,
+            NextSteps, ContactRequest, Status
+        ) VALUES (
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
+        );
+    """
+
+    values = (
+        session_id, name.identifier, email_or_phone_number.identifier, datetime_of_chat, chat_duration,
+        str(chat_transcript), chat_info.chat_summary, chat_info.category, chat_info.severity,
+        chat_info.social_care_eligibility, chat_info.suggested_course_of_action, chat_info.next_steps,
+        chat_info.contact_request, chat_info.status
+    )
+
+    return insert_query, values
+
+
+async def get_chat_info(session_id):
+    llm = AzureChatOpenAI(azure_deployment="gpt-4-1106",
+                          openai_api_version="2023-09-01-preview")
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", CHAT_INFO_PROMPT),
+            ("human", "Make calls to the relevant function to record the entities in the "
+                      "following transcript: {input}"),
+            ("human", "Tip: Make sure to answer in the correct format"),
+        ]
+    )
+    transcript = cl.user_session.get("runnable").get_session_history(session_id)
+    chain = create_openai_fn_runnable([ChatInfo], llm, prompt)
+    return await chain.ainvoke({"input": transcript})

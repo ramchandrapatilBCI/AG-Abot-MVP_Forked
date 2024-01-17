@@ -6,3 +6,5 @@ openai
 psycopg2-binary
 psycopg2
 redis
+langchain-openai
+asyncpg
