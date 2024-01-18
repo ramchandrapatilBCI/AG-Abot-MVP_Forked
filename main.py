@@ -67,9 +67,9 @@ async def on_message(message: cl.Message):
     user_id = cl.user_session.get("id")
     end, transcript = cl.user_session.get('end'), cl.user_session.get('transcript')
     if end:
-        end.remove()
+        await end.remove()
     if transcript:
-        transcript.remove()
+        await transcript.remove()
     end = cl.Action(name="End chat", value="End", description="End chat")
     transcript = cl.Action(name="Transcript", value="transcript", description="Transcript")
     actions = [
