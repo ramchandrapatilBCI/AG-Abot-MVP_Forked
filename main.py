@@ -142,7 +142,7 @@ async def on_chat_end():
 
 
 async def init_db():
-    cnx = await asyncpg.connect(user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE)
+    cnx = await asyncpg.connect(user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE, ssl=True)
     return cnx
 
 
