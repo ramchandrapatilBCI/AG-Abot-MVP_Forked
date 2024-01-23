@@ -93,16 +93,19 @@ async def on_message(message: cl.Message):
                     "'self_harm': {'filtered': True, 'severity': 'high'}" in message.content:
                 await cl.Message(
                     content="It looks like your message mentions self-harm. If you, or someone you know, is at risk or "
-                            "is experiencing self-harm, please contact the emergency services immediately.").send()
+                            "is experiencing self-harm, please contact the emergency services immediately.",
+                    actions=actions).send()
             elif "'violence': {'filtered': True, 'severity': 'medium'}" or \
                     "'violence': {'filtered': True, 'severity': 'high'}" in message.content:
                 await cl.Message(
                     content="It looks like your message mentions violence. If you, or someone you know, is at risk or "
-                            "is experiencing violence, please contact the emergency services immediately.").send()
+                            "is experiencing violence, please contact the emergency services immediately.",
+                    actions=actions).send()
             else:
                 await cl.Message(
                     content="I'm sorry, but your message has been flagged as containing harmful content by our content "
-                            "moderation policy. Please re-write your message and try again.").send()
+                            "moderation policy. Please re-write your message and try again.",
+                    actions=actions).send()
 
     cl.user_session.set('end', end)
     cl.user_session.set('transcript', transcript)
@@ -139,7 +142,7 @@ async def on_chat_end():
 
 
 async def init_db():
-    cnx = await asyncpg.connect(user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE)
+    cnx = await asyncpg.connect(user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE, ssl=True)
     return cnx
 
 
@@ -172,7 +175,7 @@ async def chat_records():
 
 
 async def get_chat_info(session_id: UUID4):
-    llm = AzureChatOpenAI(azure_deployment="gpt-4-1106",
+    llm = AzureChatOpenAI(azure_deployment="gpt-4-32k-0613",
                           openai_api_version="2023-09-01-preview")
     prompt = ChatPromptTemplate.from_messages(
         [
