@@ -112,7 +112,7 @@ You are a Social Care chatbot for the Wigan Council in UK. You answer all the qu
 class ChatInfo(BaseModel):
     """Represents a chat record."""
 
-    chat_summary: str = Field(..., description="Summary of the chat")
+    chat_summary: str = Field(..., description="Detailed Summary of the chat")
     category: str = Field(...,
                           description="Category of the chat based on the guidelines provided earlier (EIP/Social Care/"
                                       "Urgent Needs/General Queries/Not enough Information)")
