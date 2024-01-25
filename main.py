@@ -17,9 +17,10 @@ from datetime import datetime
 import chainlit as cl
 from dotenv import load_dotenv
 import asyncpg
+from chainlit.context import  init_http_context, init_ws_context
 
 load_dotenv(dotenv_path='venv/.env')
-logger = logging.getLogger(__name__)
+
 REDIS_URL = os.getenv('REDIS_URL')
 PGHOST = os.getenv('PGHOST')
 PGUSER = os.getenv('PGUSER')
@@ -43,6 +44,9 @@ DB_PROMPT = ChatPromptTemplate.from_messages(
         ("human", "Tip: Make sure to answer in the correct format"),
     ]
 )
+# Add logging mechanism
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 
 @cl.oauth_callback
@@ -69,6 +73,7 @@ async def on_chat_start():
     Raises:
         None
     """
+    logger.info("Chat started")
     model = AzureChatOpenAI(
         azure_deployment="gpt-4-1106",
         openai_api_version="2023-09-01-preview",
@@ -89,11 +94,6 @@ async def on_chat_start():
     )
 
     cl.user_session.set("runnable", runnable)
-
-    # Add logging mechanism
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-    logger = logging.getLogger(__name__)
-    logger.info("Chat started")
 
     try:
         model = AzureChatOpenAI(
@@ -199,6 +199,11 @@ async def on_action_end(action: cl.Action):
     """
     try:
         await on_chat_end()
+        await cl.Message(content=cl.user_session.get("id")).send()
+        init_http_context()
+        await cl.Message(content=cl.user_session.get("id")).send()
+        init_ws_context(cl.user_session.get("id"))
+        await cl.Message(content=cl.user_session.get("id")).send()
         await cl.Message(content="Chat ended!").send()
         if action is not None:
             await action.remove()
