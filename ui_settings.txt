@@ -15,7 +15,7 @@ cache = true
 # follow_symlink = false
 
 [features]
-prompt_playground = true
+prompt_playground = false
 multi_modal = false
 unsafe_allow_html = false
 latex = false
@@ -25,7 +25,7 @@ latex = false
 
 [UI]
 # Name of the app and chatbot.
-name = "Abot"
+name = "Cura"
 custom_css = '/public/stylesheet.css'
 
 # Description of the app and chatbot. This is used for HTML tags.
