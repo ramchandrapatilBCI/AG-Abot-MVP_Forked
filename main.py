@@ -126,15 +126,12 @@ async def on_chat_start():
 async def on_message(message: cl.Message):
     runnable = cl.user_session.get("runnable")  # type: Runnable
     user_id = cl.user_session.get("id")
-    end, transcript = cl.user_session.get('end'), cl.user_session.get('transcript')
-    if end:
-        await end.remove()
+    transcript = cl.user_session.get('transcript')
     if transcript:
         await transcript.remove()
-    end = cl.Action(name="End chat", value="End", description="End chat")
     transcript = cl.Action(name="Transcript", value="transcript", description="Transcript")
     actions = [
-        end, transcript
+        transcript
     ]
     msg = cl.Message(content="", actions=actions)
 
@@ -160,22 +157,22 @@ async def on_message(message: cl.Message):
                 "'self_harm': {'filtered': True, 'severity': 'medium'}": cl.Message(
                     content="It looks like your message mentions self-harm. If you, or someone you know, is at risk or "
                             "is experiencing self-harm, please contact the emergency services immediately.",
-                    actions=[end, transcript]
+                    actions=actions
                 ),
                 "'self_harm': {'filtered': True, 'severity': 'high'}": cl.Message(
                     content="It looks like your message mentions self-harm. If you, or someone you know, is at risk or "
                             "is experiencing self-harm, please contact the emergency services immediately.",
-                    actions=[end, transcript]
+                    actions=actions
                 ),
                 "'violence': {'filtered': True, 'severity': 'medium'}": cl.Message(
                     content="It looks like your message mentions violence. If you, or someone you know, is at risk or "
                             "is experiencing violence, please contact the emergency services immediately.",
-                    actions=[end, transcript]
+                    actions=actions
                 ),
                 "'violence': {'filtered': True, 'severity': 'high'}": cl.Message(
                     content="It looks like your message mentions violence. If you, or someone you know, is at risk or "
                             "is experiencing violence, please contact the emergency services immediately.",
-                    actions=[end, transcript]
+                    actions=actions
                 )
             }
             for harmful_content, response in harmful_content_responses.items():
@@ -189,30 +186,7 @@ async def on_message(message: cl.Message):
                     actions=actions
                 ).send()
 
-    cl.user_session.set('end', end)
     cl.user_session.set('transcript', transcript)
-
-
-@cl.action_callback("End chat")
-async def on_action_end(action: cl.Action):
-    """
-    This function is called when the "End chat" action is triggered.
-    It ends the chat, sends a message indicating the chat has ended, and removes the action.
-    """
-    try:
-        # await on_chat_end()
-        await cl.Message(content=cl.user_session.get("id")).send()
-        await disconnect(cl.user_session.get("id"), force_clear=True)
-        # await cl.Message(content=cl.user_session.get("id")).send()
-        await connect(uuid.uuid4())
-        await cl.Message(content=cl.user_session.get("id")).send()
-        cl.user_session = UserSession()
-        await cl.Message(content=cl.user_session.get("id")).send()
-        await cl.Message(content="Chat ended!").send()
-        if action is not None:
-            await action.remove()
-    except Exception as e:
-        logger.error(f"Error in on_action_end: {e}")
 
 
 @cl.action_callback("Transcript")
