@@ -201,7 +201,7 @@ async def on_action_end(action: cl.Action):
     try:
         await on_chat_end()
         await cl.Message(content=cl.user_session.get("id")).send()
-        await disconnect(cl.user_session.get("id"))
+        await disconnect(cl.user_session.get("id"), force_clear=True)
         await connect(uuid.uuid4())
         await cl.Message(content=cl.user_session.get("id")).send()
         await cl.Message(content="Chat ended!").send()
