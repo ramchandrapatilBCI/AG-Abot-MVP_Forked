@@ -17,7 +17,7 @@ from datetime import datetime
 import chainlit as cl
 from dotenv import load_dotenv
 import asyncpg
-from chainlit.context import  init_http_context, init_ws_context
+from chainlit.socket import clean_session
 
 load_dotenv(dotenv_path='venv/.env')
 
@@ -200,9 +200,7 @@ async def on_action_end(action: cl.Action):
     try:
         await on_chat_end()
         await cl.Message(content=cl.user_session.get("id")).send()
-        init_http_context()
-        await cl.Message(content=cl.user_session.get("id")).send()
-        init_ws_context(cl.user_session.get("id"))
+        await clean_session(cl.user_session.get("id"))
         await cl.Message(content=cl.user_session.get("id")).send()
         await cl.Message(content="Chat ended!").send()
         if action is not None:
