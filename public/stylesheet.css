@@ -9,6 +9,8 @@ button.MuiButtonBase-root.MuiButton-root.MuiButton-outlined.MuiButton-outlinedPr
     color: #1392c4;
 }
 
-.MuiButton-startIcon {
-    display: none;
+.css-vubbuv {
+    /* Your custom styling here */
+    display: none !important; /* For hiding */
+    /* Add more styles as needed */
 }
