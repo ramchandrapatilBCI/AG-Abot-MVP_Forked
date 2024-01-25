@@ -272,7 +272,7 @@ async def init_db():
     try:
         cnx = await asyncpg.connect(user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE,
                                     ssl=True)
-        if cnx.is_open():
+        if not cnx.is_closed():
             return cnx
         else:
             raise ConnectionError("Failed to connect to the database.")
