@@ -10,7 +10,12 @@ button.MuiButtonBase-root.MuiButton-root.MuiButton-outlined.MuiButton-outlinedPr
 }
 
 .css-vubbuv {
-    /* Your custom styling here */
-    display: none !important; /* For hiding */
-    /* Add more styles as needed */
+    display: none !important;
+}
+
+.css-jhfuvl {
+    color: #0098ca !important;
+}
+.css-3my8qy {
+    color: #0098ca !important;
 }
