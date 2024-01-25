@@ -8,3 +8,7 @@ a.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButt
 button.MuiButtonBase-root.MuiButton-root.MuiButton-outlined.MuiButton-outlinedPrimary.MuiButton-sizeMedium.MuiButton-outlinedSizeMedium.MuiButton-disableElevation.MuiButton-root.MuiButton-outlined.MuiButton-outlinedPrimary.MuiButton-sizeMedium.MuiButton-outlinedSizeMedium.MuiButton-disableElevation.css-t6aerc{
     color: #1392c4;
 }
+
+.MuiButton-startIcon {
+    display: none;
+}
