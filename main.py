@@ -13,6 +13,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from utils import CHAT_INFO_PROMPT, PROMPT, ChatInfo
 import uuid
+from chainlit.user_session import UserSession
 from datetime import datetime
 import chainlit as cl
 from dotenv import load_dotenv
@@ -199,10 +200,13 @@ async def on_action_end(action: cl.Action):
     It ends the chat, sends a message indicating the chat has ended, and removes the action.
     """
     try:
-        await on_chat_end()
+        # await on_chat_end()
         await cl.Message(content=cl.user_session.get("id")).send()
         await disconnect(cl.user_session.get("id"), force_clear=True)
+        # await cl.Message(content=cl.user_session.get("id")).send()
         await connect(uuid.uuid4())
+        await cl.Message(content=cl.user_session.get("id")).send()
+        cl.user_session = UserSession()
         await cl.Message(content=cl.user_session.get("id")).send()
         await cl.Message(content="Chat ended!").send()
         if action is not None:
