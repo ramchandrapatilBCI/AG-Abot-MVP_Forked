@@ -19,7 +19,7 @@ Thank you for choosing the Social Care Chatbot to assist you in determining your
    - Feel free to ask for a transcript at any time.
 #
 4. **Transcript Request:**
-   - To receive a transcript of your chat session, type "\transcript" at any point during the conversation.
+   - To receive a transcript of your chat session, Click the "transcript" button or type "\transcript" at any point during the conversation.
 #
 ### Important Notes:
 

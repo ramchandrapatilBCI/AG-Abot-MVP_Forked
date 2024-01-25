@@ -124,6 +124,10 @@ async def on_chat_start():
 
 @cl.on_message
 async def on_message(message: cl.Message):
+    """
+    Asynchronous function that handles incoming messages and performs various actions based on the message content.
+    Takes a `message` parameter of type `cl.Message`. Does not return anything.
+    """
     runnable = cl.user_session.get("runnable")  # type: Runnable
     user_id = cl.user_session.get("id")
     transcript = cl.user_session.get('transcript')
@@ -191,6 +195,10 @@ async def on_message(message: cl.Message):
 
 @cl.action_callback("Transcript")
 async def on_action_transcript(action: cl.Action):
+    """
+    An asynchronous function that handles the "Transcript" action.
+    Takes an action of type cl.Action as a parameter.
+    """
 
     runnable = cl.user_session.get("runnable")
     user_id = cl.user_session.get("id")
@@ -247,6 +255,16 @@ async def on_chat_end():
 
 
 async def init_db():
+    """
+    Initialize the database connection asynchronously.
+    This function attempts to establish a connection to the database using the provided
+    credentials. If successful, it returns the connection object. If the connection fails,
+    a ConnectionError is raised with an appropriate error message.
+    Returns:
+        asyncpg.Connection: The database connection object.
+    Raises:
+        ConnectionError: If the connection to the database fails.
+    """
     try:
         cnx = await asyncpg.connect(user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE,
                                     ssl=True)
@@ -261,6 +279,11 @@ async def init_db():
 
 
 async def chat_records():
+    """
+    Asynchronously retrieves chat records and related information for a user session.
+    Returns:
+        tuple: A tuple containing session information and chat details.
+    """
     session_id = cl.user_session.get('id')
     user = cl.user_session.get('user')
     if user is None:
