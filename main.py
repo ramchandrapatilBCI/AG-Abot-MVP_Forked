@@ -163,6 +163,9 @@ async def on_message(message: cl.Message) -> None:
             ):
                 if '<END>' in msg.content[-5:]:
                     msg.actions = rating_actions
+                    msg.content = msg.content[:-5]
+                    await msg.update()
+                    break
                 await msg.stream_token(chunk)
 
             await msg.send()
@@ -236,8 +239,10 @@ async def on_action_transcript(action: cl.Action):
 @cl.action_callback("5")
 async def rating(action: cl.Action):
     cl.user_session.set('rating', action.value)
-    res = await cl.AskUserMessage(content="Please enter your feedback...", timeout=120, disable_feedback=True).send()
-    cl.Message(content="Thank you for your feedback!")
+    feedback = await cl.AskUserMessage(content="Please enter your feedback...", timeout=120,
+                                       disable_feedback=True).send()
+    cl.user_session.set('feedback', feedback)
+    await cl.Message(content="Thank you for your feedback!").send()
 
 
 @cl.on_chat_end
