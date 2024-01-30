@@ -161,7 +161,7 @@ async def on_message(message: cl.Message) -> None:
                     config=RunnableConfig(callbacks=[cl.AsyncLangchainCallbackHandler()],
                                           configurable={"session_id": user_id})
             ):
-                if '<END>' in chunk:
+                if '<END>' in msg.content[-5:]:
                     msg.actions = rating_actions
                 await msg.stream_token(chunk)
 
@@ -236,8 +236,7 @@ async def on_action_transcript(action: cl.Action):
 @cl.action_callback("5")
 async def rating(action: cl.Action):
     cl.user_session.set('rating', action.value)
-    res = await cl.AskUserMessage(content="Please enter your feedback...", timeout=120,
-                                  disable_feedback=True).send()
+    res = await cl.AskUserMessage(content="Please enter your feedback...", timeout=120, disable_feedback=True).send()
     cl.Message(content="Thank you for your feedback!")
 
 
