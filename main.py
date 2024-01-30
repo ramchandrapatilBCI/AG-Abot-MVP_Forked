@@ -354,7 +354,7 @@ async def chat_records() -> tuple:
     next_steps = attribute_values['next_steps']
     contact_request = attribute_values['contact_request']
     status = attribute_values['status']
-    feedback = cl.user_session.get('feedback')
+    feedback = cl.user_session.get('feedback')['output']
     final_rating = cl.user_session.get('rating')
 
     if not all([chat_summary, category, severity, suggested_course_of_action,
