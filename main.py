@@ -238,7 +238,7 @@ async def on_action_transcript(action: cl.Action):
 async def rating(action: cl.Action):
     rating_actions = cl.user_session.get('rating_actions')
     transcript: cl.Action = cl.user_session.get('transcript')
-    if rating_actions:
+    if len(rating_actions):
         for rating_action in rating_actions:
             rating_action.remove()
     if transcript:
