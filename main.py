@@ -376,7 +376,7 @@ async def chat_records() -> tuple:
     return values
 
 
-async def get_chat_info(session_id: UUID4):
+async def get_chat_info(session_id):
     """
     Asynchronously gets chat information for the given session ID.
     Args:
@@ -384,8 +384,6 @@ async def get_chat_info(session_id: UUID4):
     Returns:
         Any: The chat information.
     """
-    if not isinstance(session_id, UUID4):
-        raise ValueError("Invalid session_id")
 
     try:
         llm = AzureChatOpenAI(azure_deployment="gpt-4-32k-0613",
