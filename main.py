@@ -367,10 +367,15 @@ async def chat_records() -> tuple:
     else:
         chat_transcript_str = str(chat_transcript)
 
+    if isinstance(rating, int):
+        rating_int = final_rating
+    else:
+        rating_int = int(final_rating)
+
     values: tuple = (
         session_id, name.identifier, email_or_phone_number.identifier, datetime_of_chat, chat_duration,
         chat_transcript_str, chat_summary, category, severity, social_care_eligibility,
-        suggested_course_of_action, next_steps, contact_request, status, final_rating, feedback
+        suggested_course_of_action, next_steps, contact_request, status, rating_int, feedback
     )
 
     return values
