@@ -134,11 +134,11 @@ async def on_message(message: cl.Message) -> None:
     if transcript:
         await transcript.remove()
     transcript = cl.Action(name="Transcript", value="transcript", description="Transcript")
-    one = cl.Action(name="1", value="1", description="1")
-    two = cl.Action(name="2", value="2", description="2")
-    three = cl.Action(name="3", value="3", description="3")
-    four = cl.Action(name="4", value="4", description="4")
-    five = cl.Action(name="5", value="5", description="5")
+    one = cl.Action(name="rating", value="1", label='1', description="1")
+    two = cl.Action(name="rating", value="2", label='2', description="2")
+    three = cl.Action(name="rating", value="3", label='3', description="3")
+    four = cl.Action(name="rating", value="4", label='4', description="4")
+    five = cl.Action(name="rating", value="5", label='5', description="5")
 
     actions = [
         transcript
@@ -146,6 +146,8 @@ async def on_message(message: cl.Message) -> None:
     rating_actions = [
         one, two, three, four, five
     ]
+    cl.user_session.set('rating_actions', rating_actions)
+    cl.user_session.set('transcript', transcript)
     msg: Message = cl.Message(content="", actions=actions)
 
     content_actions = {
@@ -204,7 +206,7 @@ async def on_message(message: cl.Message) -> None:
                     actions=actions
                 ).send()
 
-    cl.user_session.set('transcript', transcript)
+
 
 
 @cl.action_callback("Transcript")
@@ -232,17 +234,21 @@ async def on_action_transcript(action: cl.Action):
         logging.error(f"Error occurred while removing action: {e}")
 
 
-@cl.action_callback("1")
-@cl.action_callback("2")
-@cl.action_callback("3")
-@cl.action_callback("4")
-@cl.action_callback("5")
+@cl.action_callback("rating")
 async def rating(action: cl.Action):
+    rating_actions = cl.user_session.get('rating_actions')
+    transcript: cl.Action = cl.user_session.get('transcript')
+    if rating_actions:
+        for rating_action in rating_actions:
+            rating_action.remove()
+    if transcript:
+        await transcript.remove()
     cl.user_session.set('rating', action.value)
     feedback = await cl.AskUserMessage(content="Please enter your feedback...", timeout=120,
                                        disable_feedback=True).send()
     cl.user_session.set('feedback', feedback)
-    await cl.Message(content="Thank you for your feedback!").send()
+    transcript = cl.Action(name="Transcript", value="transcript", description="Transcript")
+    await cl.Message(content="Thank you for your feedback!", actions=[transcript]).send()
 
 
 @cl.on_chat_end
