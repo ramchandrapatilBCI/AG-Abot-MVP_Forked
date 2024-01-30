@@ -11,15 +11,14 @@ from typing import Dict, Optional, Tuple, Any
 from langchain_community.chat_message_histories import RedisChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
+
+from chainlit import Message
 from utils import CHAT_INFO_PROMPT, PROMPT, ChatInfo
-import uuid
-from chainlit.user_session import UserSession
 from datetime import datetime
 import chainlit as cl
 from dotenv import load_dotenv
 import asyncpg
-from chainlit.socket import connect, disconnect
-import uuid
+
 
 load_dotenv(dotenv_path='venv/.env')
 
@@ -58,23 +57,24 @@ def oauth_callback(
         raw_user_data: Dict[str, str],
         default_user: cl.User,
 ) -> Optional[cl.User]:
+    """
+    Perform oauth callback for the given provider and token.
+    Args:
+        provider_id (str): The ID of the OAuth provider.
+        token (str): The token for OAuth authentication.
+        raw_user_data (Dict[str, str]): The raw user data received from the provider.
+        default_user (cl.User): The default user to be returned if the OAuth process fails.
+    Returns:
+        Optional[cl.User]: The user object if the OAuth process is successful, else None.
+    """
     return default_user
 
 
 @cl.on_chat_start
-async def on_chat_start():
+async def on_chat_start() -> None:
     """
-    This function initializes the chatbot and sets up the conversation flow.
-
-    Parameters:
-        None
-
-    Returns:
-        None
-
-    Raises:
-        None
-    """
+     This function is triggered when a chat starts. It initializes the AzureChatOpenAI model with specific deployment and API version, creates a prompt from system and human messages, sets up a chain of operations, and sets the runnable for the user session. It also handles exceptions and logs errors.
+     """
     logger.info("Chat started")
     model = AzureChatOpenAI(
         azure_deployment="gpt-4-1106",
@@ -123,21 +123,30 @@ async def on_chat_start():
 
 
 @cl.on_message
-async def on_message(message: cl.Message):
+async def on_message(message: cl.Message) -> None:
     """
     Asynchronous function that handles incoming messages and performs various actions based on the message content.
     Takes a `message` parameter of type `cl.Message`. Does not return anything.
     """
     runnable = cl.user_session.get("runnable")  # type: Runnable
     user_id = cl.user_session.get("id")
-    transcript = cl.user_session.get('transcript')
+    transcript: cl.Action = cl.user_session.get('transcript')
     if transcript:
         await transcript.remove()
     transcript = cl.Action(name="Transcript", value="transcript", description="Transcript")
+    one = cl.Action(name="1", value="1", description="1")
+    two = cl.Action(name="2", value="2", description="2")
+    three = cl.Action(name="3", value="3", description="3")
+    four = cl.Action(name="4", value="4", description="4")
+    five = cl.Action(name="5", value="5", description="5")
+
     actions = [
         transcript
     ]
-    msg = cl.Message(content="", actions=actions)
+    rating_actions = [
+        one, two, three, four, five
+    ]
+    msg: Message = cl.Message(content="", actions=actions)
 
     content_actions = {
         '\\transcript': cl.Message(content=runnable.get_session_history(user_id)).send,
@@ -152,12 +161,14 @@ async def on_message(message: cl.Message):
                     config=RunnableConfig(callbacks=[cl.AsyncLangchainCallbackHandler()],
                                           configurable={"session_id": user_id})
             ):
+                if '<END>' in chunk:
+                    msg.actions = rating_actions
                 await msg.stream_token(chunk)
 
             await msg.send()
         except Exception as e:
             logger.error(f"An error occurred: {str(e)}")
-            harmful_content_responses = {
+            content_responses: dict[str, Message] = {
                 "'self_harm': {'filtered': True, 'severity': 'medium'}": cl.Message(
                     content="It looks like your message mentions self-harm. If you, or someone you know, is at risk or "
                             "is experiencing self-harm, please contact the emergency services immediately.",
@@ -179,7 +190,7 @@ async def on_message(message: cl.Message):
                     actions=actions
                 )
             }
-            for harmful_content, response in harmful_content_responses.items():
+            for harmful_content, response in content_responses.items():
                 if harmful_content in message.content:
                     await response.send()
                     break
@@ -199,7 +210,6 @@ async def on_action_transcript(action: cl.Action):
     An asynchronous function that handles the "Transcript" action.
     Takes an action of type cl.Action as a parameter.
     """
-
     runnable = cl.user_session.get("runnable")
     user_id = cl.user_session.get("id")
 
@@ -217,6 +227,18 @@ async def on_action_transcript(action: cl.Action):
         await action.remove()
     except Exception as e:
         logging.error(f"Error occurred while removing action: {e}")
+
+
+@cl.action_callback("1")
+@cl.action_callback("2")
+@cl.action_callback("3")
+@cl.action_callback("4")
+@cl.action_callback("5")
+async def rating(action: cl.Action):
+    cl.user_session.set('rating', action.value)
+    res = await cl.AskUserMessage(content="Please enter your feedback...", timeout=120,
+                                  disable_feedback=True).send()
+    cl.Message(content="Thank you for your feedback!")
 
 
 @cl.on_chat_end
@@ -278,11 +300,14 @@ async def init_db():
         raise ConnectionError("Failed to connect to the database.")
 
 
-async def chat_records():
+async def chat_records() -> tuple:
     """
-    Asynchronously retrieves chat records and related information for a user session.
+    Asynchronous function to retrieve chat records and related information.
     Returns:
-        tuple: A tuple containing session information and chat details.
+        tuple: A tuple containing session_id, name identifier, email or phone number
+        identifier, datetime of chat, chat duration, chat transcript, chat summary,
+        category, severity, social care eligibility, suggested course of action,
+        next steps, contact request, and status.
     """
     session_id = cl.user_session.get('id')
     user = cl.user_session.get('user')
@@ -290,7 +315,7 @@ async def chat_records():
         raise ValueError("Invalid user")
     name = user
     email_or_phone_number = user
-    datetime_of_chat = datetime.utcnow()
+    datetime_of_chat: datetime = datetime.utcnow()
     chat_duration = 30
     chat_transcript = cl.user_session.get("runnable").get_session_history(session_id)
     chat_info = await get_chat_info(session_id)
@@ -299,7 +324,7 @@ async def chat_records():
         # Handle the case when `get_chat_info(session_id)` returns None
         raise ValueError("Invalid chat_info")
 
-    attribute_defaults = {
+    attribute_defaults: dict = {
         'chat_summary': None,
         'category': None,
         'severity': None,
@@ -309,7 +334,7 @@ async def chat_records():
         'contact_request': None,
         'status': None
     }
-    attribute_values = {attr: getattr(chat_info, attr, attribute_defaults[attr]) for attr in attribute_defaults}
+    attribute_values: dict = {attr: getattr(chat_info, attr, attribute_defaults[attr]) for attr in attribute_defaults}
 
     chat_summary = attribute_values['chat_summary']
     category = attribute_values['category']
@@ -330,7 +355,7 @@ async def chat_records():
     else:
         chat_transcript_str = str(chat_transcript)
 
-    values = (
+    values: tuple = (
         session_id, name.identifier, email_or_phone_number.identifier, datetime_of_chat, chat_duration,
         chat_transcript_str, chat_summary, category, severity, social_care_eligibility,
         suggested_course_of_action, next_steps, contact_request, status
@@ -341,17 +366,11 @@ async def chat_records():
 
 async def get_chat_info(session_id: UUID4):
     """
-    Retrieves chat information based on the given session ID.
-
+    Asynchronously gets chat information for the given session ID.
     Args:
-        session_id (UUID4): The ID of the session.
-
+        session_id (UUID4): The UUID4 of the session.
     Returns:
-        The chat information.
-
-    Raises:
-        ValueError: If the session_id is invalid.
-        RuntimeError: If unable to initialize the summarizer module.
+        Any: The chat information.
     """
     if not isinstance(session_id, UUID4):
         raise ValueError("Invalid session_id")
@@ -359,7 +378,7 @@ async def get_chat_info(session_id: UUID4):
     try:
         llm = AzureChatOpenAI(azure_deployment="gpt-4-32k-0613",
                               openai_api_version="2023-09-01-preview")
-        chain = create_openai_fn_runnable([ChatInfo], llm, DB_PROMPT)
+        chain: Runnable = create_openai_fn_runnable([ChatInfo], llm, DB_PROMPT)
         return await chain.ainvoke({"input": cl.user_session.get("runnable").get_session_history(session_id)})
     except Exception as e:
         raise RuntimeError('Unable to initialise summariser module.')
