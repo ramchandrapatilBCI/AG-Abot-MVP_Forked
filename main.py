@@ -162,9 +162,9 @@ async def on_message(message: cl.Message) -> None:
                                           configurable={"session_id": user_id})
             ):
                 if '<END>' in msg.content[-5:]:
-                    msg.actions = rating_actions
                     msg.content = msg.content[:-5]
                     await msg.update()
+                    msg.actions = rating_actions
                     break
                 await msg.stream_token(chunk)
 
