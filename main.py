@@ -246,7 +246,7 @@ async def rating(action: cl.Action):
     cl.user_session.set('rating', action.value)
     feedback = await cl.AskUserMessage(content="Please enter your feedback...", timeout=120,
                                        disable_feedback=True).send()
-    cl.user_session.set('feedback', feedback)
+    cl.user_session.set('feedback', feedback['output'])
     transcript = cl.Action(name="Transcript", value="transcript", description="Transcript")
     await cl.Message(content="Thank you for your feedback!", actions=[transcript]).send()
 
@@ -354,7 +354,7 @@ async def chat_records() -> tuple:
     next_steps = attribute_values['next_steps']
     contact_request = attribute_values['contact_request']
     status = attribute_values['status']
-    feedback = cl.user_session.get('feedback')['output']
+    feedback = cl.user_session.get('feedback')
     final_rating = cl.user_session.get('rating')
 
     if not all([chat_summary, category, severity, suggested_course_of_action,
