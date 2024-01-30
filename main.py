@@ -240,7 +240,7 @@ async def rating(action: cl.Action):
     transcript: cl.Action = cl.user_session.get('transcript')
     if len(rating_actions):
         for rating_action in rating_actions:
-            rating_action.remove()
+            await rating_action.remove()
     if transcript:
         await transcript.remove()
     cl.user_session.set('rating', action.value)
