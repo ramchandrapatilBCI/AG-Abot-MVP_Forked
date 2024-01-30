@@ -32,9 +32,9 @@ INSERT_QUERY: str = """
     INSERT INTO ChatRecords (
         SessionID, Name, EmailOrPhoneNumber, DateTimeOfChat, ChatDuration, ChatTranscript,
         ChatSummary, Category, Severity, SocialCareEligibility, SuggestedCourseOfAction,
-        NextSteps, ContactRequest, Status
+        NextSteps, ContactRequest, Status, Rating, Feedback
     ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
     );
 """
 DB_PROMPT = ChatPromptTemplate.from_messages(
@@ -354,6 +354,8 @@ async def chat_records() -> tuple:
     next_steps = attribute_values['next_steps']
     contact_request = attribute_values['contact_request']
     status = attribute_values['status']
+    feedback = cl.user_session.get('feedback')
+    final_rating = int(cl.user_session.get('rating'))
 
     if not all([chat_summary, category, severity, suggested_course_of_action,
                 next_steps, contact_request, status]):
@@ -368,7 +370,7 @@ async def chat_records() -> tuple:
     values: tuple = (
         session_id, name.identifier, email_or_phone_number.identifier, datetime_of_chat, chat_duration,
         chat_transcript_str, chat_summary, category, severity, social_care_eligibility,
-        suggested_course_of_action, next_steps, contact_request, status
+        suggested_course_of_action, next_steps, contact_request, status, final_rating, feedback
     )
 
     return values
