@@ -7,18 +7,18 @@ from langchain_core.pydantic_v1 import BaseModel, Field, UUID4
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import Runnable
 from langchain.schema.runnable.config import RunnableConfig
-from typing import Dict, Optional, Tuple, Any
 from langchain_community.chat_message_histories import RedisChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
 from chainlit import Message
+import chainlit as cl
 from utils import CHAT_INFO_PROMPT, PROMPT, ChatInfo
 from datetime import datetime
-import chainlit as cl
-from dotenv import load_dotenv
+from typing import Dict, Optional, Tuple, Any
 import asyncpg
 
+from dotenv import load_dotenv
 
 load_dotenv(dotenv_path='venv/.env')
 
@@ -73,35 +73,16 @@ def oauth_callback(
 @cl.on_chat_start
 async def on_chat_start() -> None:
     """
-     This function is triggered when a chat starts. It initializes the AzureChatOpenAI model with specific deployment and API version, creates a prompt from system and human messages, sets up a chain of operations, and sets the runnable for the user session. It also handles exceptions and logs errors.
-     """
-    logger.info("Chat started")
-    model = AzureChatOpenAI(
-        azure_deployment="gpt-4-1106",
-        openai_api_version="2023-09-01-preview",
-    )
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", PROMPT),
-            MessagesPlaceholder(variable_name="history"),
-            ("human", "{question}"),
-        ]
-    )
-    chain = prompt | model | StrOutputParser()
-    runnable = RunnableWithMessageHistory(
-        chain,
-        lambda session_id: RedisChatMessageHistory(session_id, url=REDIS_URL),
-        input_messages_key="question",
-        history_messages_key="history",
-    )
-
-    cl.user_session.set("runnable", runnable)
-
+    Triggered when a chat starts.
+    """
     try:
+        # Initialize AzureChatOpenAI model
         model = AzureChatOpenAI(
             azure_deployment="gpt-4-1106",
             openai_api_version="2023-09-01-preview",
         )
+
+        # Create a prompt from system and human messages
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", PROMPT),
@@ -109,7 +90,11 @@ async def on_chat_start() -> None:
                 ("human", "{question}"),
             ]
         )
+
+        # Set up a chain of operations
         chain = prompt | model | StrOutputParser()
+
+        # Set the runnable for the user session
         runnable = RunnableWithMessageHistory(
             chain,
             lambda session_id: RedisChatMessageHistory(session_id, url=REDIS_URL),
@@ -117,8 +102,10 @@ async def on_chat_start() -> None:
             history_messages_key="history",
         )
 
+        # Set the user session runnable
         cl.user_session.set("runnable", runnable)
     except Exception as e:
+        # Log errors
         logging.error(f"An error occurred in on_chat_start: {str(e)}")
 
 
@@ -128,50 +115,57 @@ async def on_message(message: cl.Message) -> None:
     Asynchronous function that handles incoming messages and performs various actions based on the message content.
     Takes a `message` parameter of type `cl.Message`. Does not return anything.
     """
+    # Get the user's runnable object and user id from the user session
     runnable = cl.user_session.get("runnable")  # type: Runnable
     user_id = cl.user_session.get("id")
+
+    # Get the transcript action from the user session and remove it if it exists
     transcript: cl.Action = cl.user_session.get('transcript')
     if transcript:
         await transcript.remove()
-    transcript = cl.Action(name="Transcript", value="transcript", description="Transcript")
-    one = cl.Action(name="rating", value="1", label='1', description="1")
-    two = cl.Action(name="rating", value="2", label='2', description="2")
-    three = cl.Action(name="rating", value="3", label='3', description="3")
-    four = cl.Action(name="rating", value="4", label='4', description="4")
-    five = cl.Action(name="rating", value="5", label='5', description="5")
 
-    actions = [
-        transcript
-    ]
+    # Create actions for ratings and transcript
+    transcript = cl.Action(name="Transcript", value="transcript", description="Transcript")
     rating_actions = [
-        one, two, three, four, five
+        cl.Action(name=f"rating", value=str(i), label=str(i), description=str(i))
+        for i in range(1, 6)
     ]
+    # Set up rating and transcript actions in the user session
+    actions = [transcript]
     cl.user_session.set('rating_actions', rating_actions)
     cl.user_session.set('transcript', transcript)
+
+    # Create a message with the transcript action
     msg: Message = cl.Message(content="", actions=actions)
 
+    # Create content actions for specific message content
     content_actions = {
-        '\\transcript': cl.Message(content=runnable.get_session_history(user_id)).send,
-        '\\t': cl.Message(content=runnable.get_session_history(user_id)).send
+        '\\transcript': runnable.get_session_history(user_id),
+        '\\t': runnable.get_session_history(user_id)
     }
+    # Execute content actions based on message content
     if message.content in content_actions:
-        await content_actions[message.content]()
+        await cl.Message(content=content_actions[message.content]).send()
     else:
         try:
+            # Process the message content using the user's runnable object
             async for chunk in runnable.astream(
                     {"question": message.content},
                     config=RunnableConfig(callbacks=[cl.AsyncLangchainCallbackHandler()],
                                           configurable={"session_id": user_id})
             ):
                 if '<END>' in msg.content[-5:]:
+                    # Remove the '<END>' token from the message content and update the message
                     msg.content = msg.content[:-5]
                     await msg.update()
                     msg.actions = rating_actions
                     break
                 await msg.stream_token(chunk)
 
+            # Send the processed message
             await msg.send()
         except Exception as e:
+            # Handle any exceptions and send appropriate content responses
             logger.error(f"An error occurred: {str(e)}")
             content_responses: dict[str, Message] = {
                 "'self_harm': {'filtered': True, 'severity': 'medium'}": cl.Message(
@@ -195,11 +189,14 @@ async def on_message(message: cl.Message) -> None:
                     actions=actions
                 )
             }
+
+            # Check for harmful content in the message and send appropriate responses
             for harmful_content, response in content_responses.items():
                 if harmful_content in message.content:
                     await response.send()
                     break
             else:
+                # Send a default message if no harmful content is detected
                 await cl.Message(
                     content="I'm sorry, but your message has been flagged as containing harmful content by our content "
                             "moderation policy. Please re-write your message and try again.",
@@ -207,105 +204,134 @@ async def on_message(message: cl.Message) -> None:
                 ).send()
 
 
-
-
 @cl.action_callback("Transcript")
 async def on_action_transcript(action: cl.Action):
     """
-    An asynchronous function that handles the "Transcript" action.
-    Takes an action of type cl.Action as a parameter.
+    Handles the "Transcript" action asynchronously.
+    Retrieves the user's runnable and user_id from the user session,
+    then gets and sends the session history as a message.
+    If an error occurs, logs the error message.
+    Removes the action after handling.
     """
+    # Retrieve user's runnable and user_id from the user session
     runnable = cl.user_session.get("runnable")
     user_id = cl.user_session.get("id")
 
-    if runnable is not None and user_id is not None:
+    if runnable and user_id:
         try:
+            # Get and send the session history as a message
             session_history = runnable.get_session_history(user_id)
-            if session_history is not None:
+            if session_history:
                 await cl.Message(content=session_history).send()
         except Exception as e:
+            # Log error message if an error occurs
             logging.error(f"Error occurred while getting session history: {e}")
     else:
+        # Log a warning if runnable or user_id is None
         logging.warning("runnable or user_id is None")
 
     try:
+        # Remove the action after handling
         await action.remove()
     except Exception as e:
+        # Log error message if an error occurs
         logging.error(f"Error occurred while removing action: {e}")
 
 
 @cl.action_callback("rating")
 async def rating(action: cl.Action):
+    """
+    Handle the rating action by setting the rating and collecting feedback.
+    """
     rating_actions = cl.user_session.get('rating_actions')
     transcript: cl.Action = cl.user_session.get('transcript')
-    if len(rating_actions):
-        for rating_action in rating_actions:
-            await rating_action.remove()
+
+    # Remove all previous rating actions
+    for rating_action in rating_actions:
+        await rating_action.remove()
+
+    # Remove the transcript if it exists
     if transcript:
         await transcript.remove()
+
+    # Set the rating value in the user session
     cl.user_session.set('rating', action.value)
-    feedback = await cl.AskUserMessage(content="Please enter your feedback...", timeout=120,
-                                       disable_feedback=True).send()
+
+    # Ask the user for feedback and store it in the user session
+    feedback = await cl.AskUserMessage(
+        content="Please enter your feedback...",
+        timeout=120,
+        disable_feedback=True
+    ).send()
     cl.user_session.set('feedback', feedback['output'])
-    transcript = cl.Action(name="Transcript", value="transcript", description="Transcript")
-    await cl.Message(content="Thank you for your feedback!", actions=[transcript]).send()
+    # Send a thank you message and provide the option to view the transcript
+    transcript = cl.Action(
+        name="Transcript",
+        value="transcript",
+        description="Transcript"
+    )
+    await cl.Message(
+        content="Thank you for your feedback!",
+        actions=[transcript]
+    ).send()
 
 
 @cl.on_chat_end
 async def on_chat_end():
     """
-    This function is triggered when a chat ends.
-    It processes the chat history and saves it to the database.
+    Triggered when a chat ends.
+    Processes the chat history and saves it to the database.
     """
+
+    # Get the session ID
     session_id = cl.user_session.get('id')
     if session_id is None:
         raise ValueError("Invalid session_id")
 
+    # Get the session history and send a processing message
     session_history = cl.user_session.get("runnable").get_session_history(session_id)
     if session_history:
-        await cl.Message(content="Processing...").send()
-
-        conn = await init_db()
-        if conn is None:
-            raise ConnectionError("Failed to connect to the database.")
+        # await cl.Message(content="Processing...").send()
 
         try:
+            # Initialize the database connection
+            conn = await init_db()
+            if conn is None:
+                raise ConnectionError("Failed to connect to the database.")
+            # Start a transaction and insert chat records
             async with conn.transaction():
                 values = await chat_records()
                 await conn.execute(INSERT_QUERY, *values)
-        except ValueError as e:
-            # Handle the `ValueError` raised by `chat_records` and provide a meaningful error message
+        except (ValueError, asyncpg.PostgresError) as e:
             logger.error(f"Error processing chat: {e}")
-        except asyncpg.PostgresError as e:
-            # Handle the exception here, such as logging the error or providing a meaningful error message
-            logger.error(f"Error executing SQL query: {e}")
         finally:
-            # Close the connection
+            # Close the database connection
             await conn.close()
 
-        await cl.Message(content="Chat processed and saved!").send()
+        # Send a message indicating the chat has been processed and saved
+        # await cl.Message(content="Chat processed and saved!").send()
 
 
 async def init_db():
     """
-    Initialize the database connection asynchronously.
-    This function attempts to establish a connection to the database using the provided
-    credentials. If successful, it returns the connection object. If the connection fails,
-    a ConnectionError is raised with an appropriate error message.
+    Asynchronously initializes the database connection.
+
+    Attempts to establish a connection to the database using the provided credentials.
+    If successful, returns the connection object. If the connection fails, raises a ConnectionError.
+
     Returns:
         asyncpg.Connection: The database connection object.
+
     Raises:
         ConnectionError: If the connection to the database fails.
     """
     try:
-        cnx = await asyncpg.connect(user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE,
-                                    ssl=True)
-        if not cnx.is_closed():
-            return cnx
-        else:
-            raise ConnectionError("Failed to connect to the database.")
+        # Establish a connection to the database
+        return await asyncpg.connect(
+            user=PGUSER, password=PGPASSWORD, host=PGHOST, port=PGPORT, database=PGDATABASE, ssl=True
+        )
     except asyncpg.PostgresError as e:
-        # Handle the exception here, such as logging the error or providing a meaningful error message
+        # Handle the exception and raise a ConnectionError
         logging.error(f"Error connecting to the database: {e}")
         raise ConnectionError("Failed to connect to the database.")
 
