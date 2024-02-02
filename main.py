@@ -1,6 +1,7 @@
 import logging
 import os
 
+from datetime import timezone
 from langchain_openai import AzureChatOpenAI
 from langchain.chains.openai_functions import create_openai_fn_runnable
 from langchain_core.pydantic_v1 import BaseModel, Field, UUID4
@@ -127,7 +128,9 @@ async def on_message(message: cl.Message) -> None:
     # Create actions for ratings and transcript
     transcript = cl.Action(name="Transcript", value="transcript", description="Transcript")
     rating_actions = [
-        cl.Action(name=f"rating", value=str(i), label=str(i), description=str(i))
+        cl.Action(
+            name="rating", value=str(i), label=str(i), description=str(i)
+        )
         for i in range(1, 6)
     ]
     # Set up rating and transcript actions in the user session
@@ -219,9 +222,7 @@ async def on_action_transcript(action: cl.Action):
 
     if runnable and user_id:
         try:
-            # Get and send the session history as a message
-            session_history = runnable.get_session_history(user_id)
-            if session_history:
+            if session_history := runnable.get_session_history(user_id):
                 await cl.Message(content=session_history).send()
         except Exception as e:
             # Log error message if an error occurs
@@ -260,20 +261,28 @@ async def rating(action: cl.Action):
     # Ask the user for feedback and store it in the user session
     feedback = await cl.AskUserMessage(
         content="Please enter your feedback...",
-        timeout=120,
+        timeout=600,
         disable_feedback=True
     ).send()
-    cl.user_session.set('feedback', feedback['output'])
-    # Send a thank you message and provide the option to view the transcript
     transcript = cl.Action(
         name="Transcript",
         value="transcript",
         description="Transcript"
     )
-    await cl.Message(
-        content="Thank you for your feedback!",
-        actions=[transcript]
-    ).send()
+    if feedback:
+        cl.user_session.set('feedback', feedback['output'])
+
+
+        # Send a thank you message and provide the option to view the transcript
+        await cl.Message(
+            content="Thank you for your feedback!",
+            actions=[transcript]
+        ).send()
+    else:
+        await cl.Message(
+            content="No feedback provided",
+            actions=[transcript]
+        ).send()
 
 
 @cl.on_chat_end
@@ -288,9 +297,9 @@ async def on_chat_end():
     if session_id is None:
         raise ValueError("Invalid session_id")
 
-    # Get the session history and send a processing message
-    session_history = cl.user_session.get("runnable").get_session_history(session_id)
-    if session_history:
+    if session_history := cl.user_session.get("runnable").get_session_history(
+        session_id
+    ):
         # await cl.Message(content="Processing...").send()
 
         try:
@@ -333,7 +342,7 @@ async def init_db():
     except asyncpg.PostgresError as e:
         # Handle the exception and raise a ConnectionError
         logging.error(f"Error connecting to the database: {e}")
-        raise ConnectionError("Failed to connect to the database.")
+        raise ConnectionError("Failed to connect to the database.") from e
 
 
 async def chat_records() -> tuple:
@@ -351,14 +360,14 @@ async def chat_records() -> tuple:
         raise ValueError("Invalid user")
     name = user
     email_or_phone_number = user
-    datetime_of_chat: datetime = datetime.utcnow()
+    datetime_of_chat: datetime = datetime.now(timezone.utc)
     chat_duration = 30
     chat_transcript = cl.user_session.get("runnable").get_session_history(session_id)
     chat_info = await get_chat_info(session_id)
 
-    if chat_info is None:
+    if chat_info or chat_transcript is None:
         # Handle the case when `get_chat_info(session_id)` returns None
-        raise ValueError("Invalid chat_info")
+        raise ValueError("Invalid chat_info and chat transcript")
 
     attribute_defaults: dict = {
         'chat_summary': None,
@@ -417,4 +426,4 @@ async def get_chat_info(session_id):
         chain: Runnable = create_openai_fn_runnable([ChatInfo], llm, DB_PROMPT)
         return await chain.ainvoke({"input": cl.user_session.get("runnable").get_session_history(session_id)})
     except Exception as e:
-        raise RuntimeError('Unable to initialise summariser module.')
+        raise RuntimeError('Unable to initialise summariser module.') from e
