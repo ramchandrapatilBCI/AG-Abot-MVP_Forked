@@ -1,30 +1,19 @@
-# Welcome to Social Care Chatbot
+# Welcome to Cura
 
-## Getting Started
-
-Thank you for choosing the Social Care Chatbot to assist you in determining your eligibility for social care services. This interactive chatbot is designed to provide a seamless and user-friendly experience. Please follow the instructions below to begin the assessment.
+## The digital community front door
 
 ### Instructions:
 
-1. **Chat Initialization:**
-   - To start the chat, simply type your first message in the chat window and press "Enter."
-   - The chatbot will respond and guide you through the assessment process.
-#
-2. **Assessment Process:**
-   - The chatbot will ask a series of questions to assess your eligibility for social care services.
-   - Answer each question honestly and to the best of your knowledge.
-#
-3. **Context Retention:**
-   - The chatbot remembers your previous answers to provide a context-aware conversation.
-   - Feel free to ask for a transcript at any time.
-#
-4. **Transcript Request:**
-   - To receive a transcript of your chat session, type "\transcript" at any point during the conversation.
-#
-### Important Notes:
+#### Chat Initialization:
+- Start the chat by simply writing a message in the chat window and pressing “ENTER”.
 
-- This chatbot is designed for informational purposes and does not replace professional advice.
-- Your privacy is our priority. All data is handled securely and in compliance with applicable regulations.
-- If you encounter any issues or have feedback, type "\help" for assistance.
+#### Triaging Process:
+- As we are developing the triaging function of Cura, start by asking it questions as if you were a person in need of social care. The chatbot will continue the conversation by asking a series of questions to determine which team is best suited to address your needs.
 
-## Thank you for choosing the Social Care Chatbot! We are here to help you through the social care assessment process.
+#### Response Feedback:
+- After each response the chatbot provides, use the thumbs up/down at the bottom of the response to provide feedback on the quality. This will open a window which will allow you to give further written feedback if you wish to do so.
+
+#### Ending the Conversation:
+- At the end of each conversation, Cura will give you the opportunity to provide overall feedback on its performance. Please take the time to fill this out as it will help us improve the quality of the responses.
+
+Have fun! Try using Cura for different scenarios, from complex and urgent needs, to simpler ones. It is important to test Cura’s abilities in different scenario’s in order to improve its performance in a real-life context. Try “breaking” the chatbot!
