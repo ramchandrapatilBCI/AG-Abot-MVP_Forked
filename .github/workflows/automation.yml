@@ -1,33 +1,35 @@
 name: ABOTautomation
+
 on:
   push:
-    branches:
-      - ABOTAutoPytest
-jobs:
-  build:
-    - runs-on: ubuntu-latest
-    - name: set up Python 3.11.7
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.11.7"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        if[ -f requirements.txt ]; then pip install -r requirements.txt;fi
-    - uses: actions/setup-python@v3
-      if: success() || failure()
-    - run: |
-        cd wegonTest
-        mkdir -p reports
-        pytest --alluredir=Reports
-        chmod 777 /home/runner/work/python-se/python-se/tests/reports
-    - name: Set Output
-      if: success() || failure()
-      id: results
-    - run: echo "acrtifactPath=tests/reports/" >> $GITHUB_OUTPUT
+    branches: ["ABOTAutoPytest"]
 
-    - uses: actions/setup-python@v3
-      if: success() || failure()
-      with:
-        name: test-report
-        path: ${{steps.results.outputs.artifactpath }}
+jobs:
+  automation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python 3.11.7
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.11.7"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run tests and generate allure reports
+        run: |
+          mkdir -p reports
+          pytest --alluredir=reports
+          chmod -R 777 reports
+
+      - name: Set Output
+        id: results
+        run: echo "::set-output name=artifactPath::tests/reports/"
+
+      - name: Upload test reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-reports
+          path: ${{ steps.results.outputs.artifactPath }}
