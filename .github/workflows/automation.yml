@@ -21,7 +21,7 @@ jobs:
       - name: Run tests and generate allure reports
         run: |
           mkdir -p reports
-          pytest --alluredir=reports
+          python -m pytest --alluredir=reports
           chmod -R 777 reports
 
       - name: Set Output
