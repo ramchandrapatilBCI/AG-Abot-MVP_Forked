@@ -1,3 +1,5 @@
 pytest==7.4.4
 selenium==4.14
 allure-pytest==2.13.2
+allure-python-commons==2.13.2
+deepeval==0.20.63
