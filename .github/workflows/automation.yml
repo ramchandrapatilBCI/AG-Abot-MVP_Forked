@@ -27,8 +27,8 @@ jobs:
 
       - name: Run tests and generate allure reports
         run:
-          mkdir -p reports
-          python -m pytest --alluredir=reports
+          mkdir reports
+          pytest --alluredir=reports
 
       - name: Set Output
         id: results
