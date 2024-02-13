@@ -19,9 +19,9 @@ jobs:
           pip install pytest pytest-allure-adaptor
 
       - name: Install other dependencies
-        run:
-          if [ -f "requirements.txt" ];  then
-          pip install -r requirements.txt
+        run: |
+          if [ -f "requirements.txt" ]; then
+            pip install -r requirements.txt
           fi
 
       - name: Run tests and generate allure reports
