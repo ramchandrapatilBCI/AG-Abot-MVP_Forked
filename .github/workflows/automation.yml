@@ -25,9 +25,11 @@ jobs:
             pip install -r requirements.txt
           fi
 
+      - name: Create reports directory
+        run: mkdir -p reports
+
       - name: Run tests and generate allure reports
-        run:
-          mkdir reports
+        run: |
           pytest --alluredir=reports
 
       - name: Set Output
