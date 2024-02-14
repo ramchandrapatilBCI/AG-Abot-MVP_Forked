@@ -18,7 +18,7 @@ jobs:
 
       - name: Install other dependencies
         run: |
-          cd /home/runner/work/AG-Abot-MVP/AG-Abot-MVP/;
+          echo $(Build.SourcesDirectory)
           if [ -f "requirements.txt" ]; then
             echo 'Hari'
             pip install -r requirements.txt
@@ -28,8 +28,12 @@ jobs:
         run: mkdir -p reports
       - name: Run tests and generate allure reports
         run: |
-          cd /home/runner/work/AG-Abot-MVP/AG-Abot-MVP/Tests/;
+          echo 'ram'
+          echo $(Build.SourcesDirectory)
+          echo 'ram'
           python -m pytest test_UITests_test.py --alluredir=reports
+#          cd /home/runner/work/AG-Abot-MVP/AG-Abot-MVP/Tests/;
+
       - name: Set Output
         id: results
         run: echo "::set-output name=artifactPath::/"
