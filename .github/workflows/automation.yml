@@ -16,21 +16,13 @@ jobs:
       - name: Install dependencies
         run:
           pip install --upgrade pip
-          pip install pytest 
           pip install allure-pytest
-
-      - name: Install other dependencies
-        run: |
+          pip install pytest
           if [ -f "requirements.txt" ]; then
             pip install -r requirements.txt
           fi
-
-      - name: Create reports directory
-        run: mkdir -p reports
-
-      - name: Run tests and generate allure reports
-        run: |
-          pipenv run pytest
+          mkdir -p reports
+          pytest --alluredir=reports
 
       - name: Set Output
         id: results
