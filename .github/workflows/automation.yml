@@ -26,7 +26,7 @@ jobs:
         run: mkdir -p reports
       - name: Run tests and generate allure reports
         run: |
-          set pwd=ls-la
+          set pwd=cd
           echo 'Ram'
           echo $pwd
           echo 'Ram'
