@@ -27,7 +27,8 @@ jobs:
         run: mkdir -p reports
       - name: Run tests and generate allure reports
         run: |
-          cd ..; pytest --alluredir=reports
+          cd ..; 
+          pytest test_UITests_test.py --alluredir=reports
       - name: Set Output
         id: results
         run: echo "::set-output name=artifactPath::/"
