@@ -18,7 +18,7 @@ jobs:
 
       - name: Install other dependencies
         run: |
-          cd {project};
+          cd AG-Abot-MVP;
           if [ -f "requirements.txt" ]; && command -v pip >/dev/null; then
             pip install -r requirements.txt
           fi
@@ -27,7 +27,7 @@ jobs:
         run: mkdir -p reports
       - name: Run tests and generate allure reports
         run: |
-          cd {project}; pytest --alluredir=reports
+          cd AG-Abot-MVP; pytest --alluredir=reports
       - name: Set Output
         id: results
         run: echo "::set-output name=artifactPath::/"
