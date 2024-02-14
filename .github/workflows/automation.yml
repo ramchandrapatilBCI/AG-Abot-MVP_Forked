@@ -18,7 +18,7 @@ jobs:
           pip install --upgrade pip
           pip install allure-pytest
           pip install pytest
-          mkdir -p reports
+          mkdir reports
           pytest --alluredir=reports
 
       - name: Set Output
