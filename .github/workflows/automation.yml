@@ -20,7 +20,7 @@ jobs:
           pip install pytest
           pip install -r requirements.txt
           mkdir reports
-          pytest --alluredir=reports
+          pytest
 
       - name: Set Output
         id: results
