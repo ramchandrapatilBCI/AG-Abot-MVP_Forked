@@ -27,7 +27,9 @@ jobs:
       - name: Run tests and generate allure reports
         run: |
           set pwd=ls-la
+          echo 'Ram'
           echo $pwd
+          echo 'Ram'
           cd Tests;
           python -m pytest test_UITests_test.py --alluredir=reports
       - name: Set Output
