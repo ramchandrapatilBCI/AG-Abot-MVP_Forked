@@ -18,9 +18,6 @@ jobs:
           pip install --upgrade pip
           pip install allure-pytest
           pip install pytest
-          if [ -f "requirements.txt" ]; then
-            pip install -r requirements.txt
-          fi
           mkdir -p reports
           pytest --alluredir=reports
 
