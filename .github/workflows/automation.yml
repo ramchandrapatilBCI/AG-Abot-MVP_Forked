@@ -30,7 +30,7 @@ jobs:
 
       - name: Run tests and generate allure reports
         run: |
-          pytest test_UITests_test.py
+          pytest /AG-Abot-MVP-ABOTAutoPytest/test_UITests_test.py
 
       - name: Set Output
         id: results
