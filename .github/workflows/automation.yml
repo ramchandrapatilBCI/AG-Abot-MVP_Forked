@@ -28,7 +28,7 @@ jobs:
         run: | 
           set PWD=%CD%
           echo $PWD
-          cd Tests;
+          cd /home/runner/work/AG-Abot-MVP/AG-Abot-MVPTests;
           python -m pytest test_UITests_test.py --alluredir=reports
       - name: Set Output
         id: results
