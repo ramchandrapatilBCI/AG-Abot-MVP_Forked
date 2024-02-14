@@ -30,7 +30,7 @@ jobs:
 
       - name: Run tests and generate allure reports
         run: |
-          pytest test_UITests_test.py --alluredir=reports
+          pytest ./ABOT_genTAF/test_UITests_test.py --alluredir=reports
 
       - name: Set Output
         id: results
