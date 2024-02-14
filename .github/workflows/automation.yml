@@ -21,6 +21,8 @@ jobs:
           pip install -r requirements.txt
           mkdir reports
           pytest test_UITests_test.py
+        with:
+          repo-directory: './'
 
       - name: Set Output
         id: results
