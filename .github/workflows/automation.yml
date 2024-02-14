@@ -30,7 +30,7 @@ jobs:
 
       - name: Run tests and generate allure reports
         run: |
-          pytest
+          pipenv run pytest
 
       - name: Set Output
         id: results
