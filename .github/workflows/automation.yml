@@ -26,6 +26,7 @@ jobs:
         run: mkdir -p reports
       - name: Run tests and generate allure reports
         run: | 
+          echo $pwd
           cd Tests;
           python -m pytest test_UITests_test.py --alluredir=reports
       - name: Set Output
