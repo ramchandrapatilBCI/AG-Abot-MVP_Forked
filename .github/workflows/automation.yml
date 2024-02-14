@@ -30,7 +30,7 @@ jobs:
 
       - name: Run tests and generate allure reports
         run: |
-          pytest ./* --alluredir=reports
+          pytest .* --alluredir=reports
 
       - name: Set Output
         id: results
