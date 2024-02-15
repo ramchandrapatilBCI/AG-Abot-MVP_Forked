@@ -1,7 +1,10 @@
 name: ABOTautomation
+
 on:
   push:
-    branches: ["ABOTAutoPytest"]
+    branches:
+      - ABOTAutoPytest
+
 jobs:
   automation:
     runs-on: ubuntu-latest
@@ -10,34 +13,34 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: "3.11.7"
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Install dependencies
         run:
           pip install --upgrade pip
           pip install pytest
           pip install allure-pytest
-          pip install coverage
 
       - name: Install other dependencies
         run: |
           if [ -f "requirements.txt" ]; then
-            echo 'Hari'
             pip install -r requirements.txt
           fi
 
       - name: Create reports directory
         run: mkdir -p reports
+
       - name: Run tests and generate allure reports
         run: |
-#          cd /home/runner/work/AG-Abot-MVP/AG-Abot-MVP;
-          coverage run -m pytest -v -s
-#          cd AG-Abot-MVP/Tests
-#          python -m pytest test_UITests_test.py --alluredir=reports
-#          cd /home/runner/work/AG-Abot-MVP/AG-Abot-MVP/Tests/;
-
+          cd Tests/
+          python -m pytest test_UITests_test.py --alluredir=../reports
 
       - name: Set Output
         id: results
-        run: echo "::set-output name=artifactPath::/"
+        run: echo "::set-output name=artifactPath::reports"
+
       - name: Upload test reports
         uses: actions/upload-artifact@v2
         with:
