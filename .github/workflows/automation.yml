@@ -25,6 +25,7 @@ jobs:
           pip install --upgrade pip
           pip install pytest
           pip install allure-pytest
+          pip install typing_extensions==4.7.1 --upgrade
 
       - name: Install other dependencies
         run: |
