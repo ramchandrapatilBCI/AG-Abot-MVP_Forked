@@ -18,6 +18,8 @@ jobs:
 
       - name: Install other dependencies
         run: |
+          set pwd=%cd%
+          echo $pwd
           if [ -f "requirements.txt" ]; then
             echo 'Hari'
             pip install -r requirements.txt
