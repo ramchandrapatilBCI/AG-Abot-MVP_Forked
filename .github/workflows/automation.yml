@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: install chrome
         run: |
+          apt-get install -y wget
+          wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo -E apt-get install -y google-chrome-stable
       - name: Set up Python 3.11.7
         uses: actions/setup-python@v3
