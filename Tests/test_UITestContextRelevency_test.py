@@ -1,5 +1,5 @@
 import time
-
+from telnetlib import EC
 import pytest
 from deepeval.metrics import ContextualRelevancyMetric
 from deepeval.test_case import LLMTestCase
