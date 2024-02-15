@@ -18,8 +18,8 @@ jobs:
 
       - name: Install other dependencies
         run: |
-          echo 'ram'
           set pwd=%cd%
+          echo 'ram'
           echo $pwd
           echo 'ram'
           if [ -f "requirements.txt" ]; then
