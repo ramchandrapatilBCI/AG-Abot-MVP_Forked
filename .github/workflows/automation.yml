@@ -12,6 +12,7 @@ jobs:
       - name: install chrome
         run: |
           sudo -E apt-get install -y google-chrome-stable
+          google-chrome --update
       - name: Set up Python 3.11.7
         uses: actions/setup-python@v3
         with:
