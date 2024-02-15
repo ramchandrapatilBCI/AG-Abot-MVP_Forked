@@ -20,7 +20,7 @@ jobs:
         run: |
           set pwd=%cd%
           echo 'ram'
-          echo %pwd%
+          echo $pwd
           echo 'ram'
           if [ -f "requirements.txt" ]; then
             echo 'Hari'
