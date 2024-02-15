@@ -15,6 +15,7 @@ jobs:
           pip install --upgrade pip
           pip install pytest
           pip install allure-pytest
+          pip install coverage
 
       - name: Install other dependencies
         run: |
