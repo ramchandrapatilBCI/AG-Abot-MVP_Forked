@@ -18,7 +18,7 @@ jobs:
 
       - name: Install other dependencies
         run: |
-          set pwd=%cd%
+          set pwd=cd
           echo 'ram'
           echo $pwd
           echo 'ram'
