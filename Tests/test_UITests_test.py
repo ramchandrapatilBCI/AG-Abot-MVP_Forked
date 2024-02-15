@@ -1,6 +1,6 @@
 import time
 from telnetlib import EC
-from selenium.webdriver.support import expected_conditions as EC
+# from selenium.webdriver.support import expected_conditions as EC
 import pytest
 from selenium import webdriver
 from selenium.webdriver import Keys, ActionChains
@@ -39,18 +39,18 @@ class TestUITest:
         ele_input = driver.find_element(By.XPATH, f"//img[@alt='logo']")
         assert ele_input, 'Wigon Counsil logo is missing'
 
-    # @pytest.mark.usefixtures("driver")
-    # def test_Transcript(self, driver):
-    #     time.sleep(5)
-    #     chat_input = driver.find_element(By.ID, f"chat-input")
-    #     ActionChains(driver).move_to_element(chat_input).click(chat_input).perform()
-    #     chat_input.send_keys(Keys.ENTER)
-    #     driver.implicitly_wait(15)
-    #     chat_input.send_keys("jfhksdhkfsd jkhdskjhfdskh dsjdsjkhkh")
-    #     chat_input.send_keys(Keys.ENTER)
-    #     driver.find_element(By.XPATH,"//div[@id='actions-list']").click()
-    #     ele_input = driver.find_element(By.XPATH, f"//code")
-    #     assert ele_input, 'Transcript is NOT generated'
+    @pytest.mark.usefixtures("driver")
+    def test_Transcript(self, driver):
+        time.sleep(5)
+        chat_input = driver.find_element(By.ID, f"chat-input")
+        ActionChains(driver).move_to_element(chat_input).click(chat_input).perform()
+        chat_input.send_keys(Keys.ENTER)
+        driver.implicitly_wait(15)
+        chat_input.send_keys("jfhksdhkfsd jkhdskjhfdskh dsjdsjkhkh")
+        chat_input.send_keys(Keys.ENTER)
+        driver.find_element(By.XPATH,"//div[@id='actions-list']").click()
+        ele_input = driver.find_element(By.XPATH, f"//code")
+        assert ele_input, 'Transcript is NOT generated'
 
     @pytest.mark.usefixtures("driver")
     def test_NewChatPopupWindow(self, driver):
@@ -509,51 +509,51 @@ class TestUITest:
             assert 0
             # Re-raise the exception to fail the test
 
-    # @pytest.mark.usefixtures("driver")
-    # def test_EnterFeedbackHelpfullConfirmMsg(self, driver):
-    #     try:
-    #         driver.implicitly_wait(15)
-    #         chatElements = driver.find_elements(By.XPATH,
-    #                                             f"//*[contains(text(), 'Today')]/following::a[starts-with(@id,'thread')]")
-    #         print("==========================================================")
-    #         print(len(chatElements))
-    #         # Wait for a short time, if needed
-    #         driver.implicitly_wait(15)
-    #         # Click on the element after the hover
-    #         chat_input = driver.find_element(By.ID, f"chat-input")
-    #         ActionChains(driver).move_to_element(chat_input).click(chat_input).perform()
-    #         # chat_input.click()
-    #         # WebDriverWait(driver, 10).until(
-    #         #     EC.visibility_of_element_located(chat_input))
-    #         chat_input.send_keys(f"Hi, I need your help")
-    #         chat_input.send_keys(Keys.ENTER)
-    #         driver.implicitly_wait(15)
-    #         driver.execute_script('return document.readyState;')
-    #         element = WebDriverWait(driver, 15).until(
-    #             EC.visibility_of_element_located((By.XPATH, "//span[@aria-label='Not helpful']"))
-    #         )
-    #         time.sleep(5)
-    #         # eleThumbUP=driver.find_element(By.XPATH, "//span[@aria-label='Helpful']")
-    #         driver.find_element(By.XPATH, "(//span[@aria-label='Helpful'])").click()
-    #
-    #         driver.execute_script('return document.readyState;')
-    #         time.sleep(5)
-    #         feedbackDialog = driver.find_element(By.XPATH, "//div[@role='dialog']")
-    #         assert feedbackDialog.is_displayed(), "Dailog box NOT displayed"
-    #         feedbackDialogInput = driver.find_element(By.ID, "feedbackDescription")
-    #         feedbackDialogInput.send_keys("NOT Happy")
-    #         driver.find_element(By.ID, "feedbackSubmit").click()
-    #         # time.sleep(5)
-    #         # driver.execute_script('return document.readyState;')
-    #         WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.XPATH, "//li[@aria-live='polite']")))
-    #         assert driver.find_element(By.XPATH,
-    #                                    "//li[@aria-live='polite']").is_displayed(), "Feedback NOT submitted"
-    #         time.sleep(5)
-    #     except Exception as e:
-    #         # Print the exception details for debugging
-    #         print(f"Exception occurred: {e}")
-    #         assert 0
-    #         # Re-raise the exception to fail the test
+    @pytest.mark.usefixtures("driver")
+    def test_EnterFeedbackHelpfullConfirmMsg(self, driver):
+        try:
+            driver.implicitly_wait(15)
+            chatElements = driver.find_elements(By.XPATH,
+                                                f"//*[contains(text(), 'Today')]/following::a[starts-with(@id,'thread')]")
+            print("==========================================================")
+            print(len(chatElements))
+            # Wait for a short time, if needed
+            driver.implicitly_wait(15)
+            # Click on the element after the hover
+            chat_input = driver.find_element(By.ID, f"chat-input")
+            ActionChains(driver).move_to_element(chat_input).click(chat_input).perform()
+            # chat_input.click()
+            # WebDriverWait(driver, 10).until(
+            #     EC.visibility_of_element_located(chat_input))
+            chat_input.send_keys(f"Hi, I need your help")
+            chat_input.send_keys(Keys.ENTER)
+            driver.implicitly_wait(15)
+            driver.execute_script('return document.readyState;')
+            element = WebDriverWait(driver, 15).until(
+                EC.visibility_of_element_located((By.XPATH, "//span[@aria-label='Not helpful']"))
+            )
+            time.sleep(5)
+            # eleThumbUP=driver.find_element(By.XPATH, "//span[@aria-label='Helpful']")
+            driver.find_element(By.XPATH, "(//span[@aria-label='Helpful'])").click()
+
+            driver.execute_script('return document.readyState;')
+            time.sleep(5)
+            feedbackDialog = driver.find_element(By.XPATH, "//div[@role='dialog']")
+            assert feedbackDialog.is_displayed(), "Dailog box NOT displayed"
+            feedbackDialogInput = driver.find_element(By.ID, "feedbackDescription")
+            feedbackDialogInput.send_keys("NOT Happy")
+            driver.find_element(By.ID, "feedbackSubmit").click()
+            # time.sleep(5)
+            # driver.execute_script('return document.readyState;')
+            WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.XPATH, "//li[@aria-live='polite']")))
+            assert driver.find_element(By.XPATH,
+                                       "//li[@aria-live='polite']").is_displayed(), "Feedback NOT submitted"
+            time.sleep(5)
+        except Exception as e:
+            # Print the exception details for debugging
+            print(f"Exception occurred: {e}")
+            assert 0
+            # Re-raise the exception to fail the test
 
     @pytest.mark.usefixtures("driver")
     def test_EnterFeedbackNOTHelpfullConfirmMsg(self, driver):
