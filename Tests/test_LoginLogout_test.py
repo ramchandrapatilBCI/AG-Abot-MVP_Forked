@@ -11,9 +11,9 @@ class TestLogin:
     def driver(self):
         options = webdriver.ChromeOptions()
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_argument('headless')
         prefs = {"credentials_enable_service": False, "profile.password_manager_enabled": False}
         options.add_experimental_option("prefs", prefs)
-        options.add_argument("--headless")
         web_driver = webdriver.Chrome(options=options)
         web_driver.get('https://abot-test-001.azurewebsites.net/login')
         web_driver.execute_script('return document.readyState;')
