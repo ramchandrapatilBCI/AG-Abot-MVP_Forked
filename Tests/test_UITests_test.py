@@ -1,5 +1,5 @@
 import time
-from telnetlib import EC
+from telnetlib3 import EC
 # from selenium.webdriver.support import expected_conditions as EC
 import pytest
 from selenium import webdriver
