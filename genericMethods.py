@@ -2,19 +2,16 @@ from selenium.webdriver.common.by import By
 from configparser import ConfigParser
 from selenium.common.exceptions import NoSuchElementException
 
-# def readConfigIni(key):
-#     config_object = ConfigParser()
-#     config_object.read('../config.ini')
-#     azureData = config_object['AZUREDATA']
-#     return azureData[key]
+
 def readConfigIni(Key):
-    config= ConfigParser()
+    config = ConfigParser()
     config.read('../config.ini')
     print(config.sections())
     return config.get(Key)
 
+
 def matchString(str, text_list):
-    flag=False
+    flag = False
     for s in text_list:
         if str in s:
             flag = True
