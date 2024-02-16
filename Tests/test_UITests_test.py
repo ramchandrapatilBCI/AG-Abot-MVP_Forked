@@ -14,6 +14,7 @@ class TestUITest:
     def driver(self):
         options = webdriver.ChromeOptions()
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_argument('headless')
         prefs = {"credentials_enable_service": False, "profile.password_manager_enabled": False}
         options.add_experimental_option("prefs", prefs)
         web_driver = webdriver.Chrome(options)
