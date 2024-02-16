@@ -17,7 +17,7 @@ class TestUITest:
         prefs = {"credentials_enable_service": False, "profile.password_manager_enabled": False}
         options.add_experimental_option("prefs", prefs)
         web_driver = webdriver.Chrome(options)
-        web_driver.get('https://abot-test-001.azurewebsites.net/login')
+        web_driver.get('https://abot-test-001.azurewebsites.net/login/')
         web_driver.execute_script('return document.readyState;')
         web_driver.maximize_window()
         web_driver.implicitly_wait(15)
