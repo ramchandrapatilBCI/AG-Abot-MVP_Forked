@@ -360,14 +360,14 @@ async def chat_records() -> tuple:
         raise ValueError("Invalid user")
     name = user
     email_or_phone_number = user
-    datetime_of_chat: datetime = datetime.now(timezone.utc)
+    datetime_of_chat: datetime = datetime.utcnow()
     chat_duration = 30
     chat_transcript = cl.user_session.get("runnable").get_session_history(session_id)
     chat_info = await get_chat_info(session_id)
 
-    if chat_info or chat_transcript is None:
-        # Handle the case when `get_chat_info(session_id)` returns None
-        raise ValueError("Invalid chat_info and chat transcript")
+    # if chat_info or chat_transcript is None:
+    #     # Handle the case when `get_chat_info(session_id)` returns None
+    #     raise ValueError("Invalid chat_info and chat transcript")
 
     attribute_defaults: dict = {
         'chat_summary': None,
