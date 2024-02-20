@@ -1,9 +1,13 @@
 name: ABOTautomation
 
 on:
+  workflow_dispatch:
+    schedule:
+      - cron: '*/5 * * * *'
   push:
     branches:
-      - ABOTAutoPytest
+permissions:
+  contents: write
 
 jobs:
   automation:
