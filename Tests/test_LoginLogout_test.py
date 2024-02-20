@@ -53,8 +53,9 @@ class TestLogin:
         driver.find_element(By.XPATH, "//input[@name='password']").send_keys('@Test12345')
         driver.find_element(By.NAME, "action").click()
         driver.implicitly_wait(10)
-        print("printing Title->", driver.title)
-        assert driver.title == 'Log in | Cura'
+        pageTitle=driver.title
+        print("printing Title->", pageTitle)
+        assert pageTitle == 'Log in | Cura'
 
     @pytest.mark.usefixtures("driver")
     def test_LoginUnSuccessful_InvalidPassword(self, driver):
