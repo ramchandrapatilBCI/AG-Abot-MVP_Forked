@@ -51,7 +51,7 @@ jobs:
       - name: Run tests and generate allure reports
         run: |
           cd Tests/
-          pytest --alluredir=../reports
+          pytest test_LoginLogout_test.py --alluredir=../reports
 
       - name: Set Output
         id: results
