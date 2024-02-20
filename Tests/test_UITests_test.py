@@ -49,7 +49,7 @@ class TestUITest:
         driver.implicitly_wait(15)
         chat_input.send_keys("jfhksdhkfsd jkhdskjhfdskh dsjdsjkhkh")
         chat_input.send_keys(Keys.ENTER)
-        driver.find_element(By.XPATH,"//div[@id='actions-list']").click()
+        driver.find_element(By.XPATH, "//div[@id='actions-list']").click()
         ele_input = driver.find_element(By.XPATH, f"//code")
         assert ele_input, 'Transcript is NOT generated'
 
@@ -74,11 +74,7 @@ class TestUITest:
             popup = driver.find_element(By.ID, "new-chat-dialog")
             if (popup.is_displayed()):
                 flag = False
-            else:
-                flag = True
-
             assert flag, 'Popup is displayed'
-
         except:
             print("Exception occured")
 
@@ -204,7 +200,7 @@ class TestUITest:
             chatElements = driver.find_elements(By.XPATH,
                                                 f"//following::a[starts-with(@id,'thread')]")
             print("==========================================================")
-            chatLengthBeforeAdd=len(chatElements)
+            chatLengthBeforeAdd = len(chatElements)
             # Wait for a short time, if needed
             driver.implicitly_wait(15)
             # Click on the element after the hover
@@ -234,7 +230,7 @@ class TestUITest:
             chatElements1 = driver.find_elements(By.XPATH,
                                                  f"//following::a[starts-with(@id,'thread')]")
             print("==========================================================")
-            chatLengthAfterAdd=len(chatElements)
+            chatLengthAfterAdd = len(chatElements)
             assert chatLengthBeforeAdd == chatLengthAfterAdd, "Chat has NOT added to history"
 
         except Exception as e:
@@ -420,7 +416,6 @@ class TestUITest:
             assert 0
             # Re-raise the exception to fail the test
 
-
     @pytest.mark.usefixtures("driver")
     def test_EnterFeeddbackHelpfull(self, driver):
         try:
@@ -457,7 +452,8 @@ class TestUITest:
             driver.find_element(By.ID, "feedbackSubmit").click()
             time.sleep(5)
             driver.execute_script('return document.readyState;')
-            assert driver.find_element(By.XPATH,"//span[@aria-label='Feedback']").is_displayed(),"Feedback NOT submitted"
+            assert driver.find_element(By.XPATH,
+                                       "//span[@aria-label='Feedback']").is_displayed(), "Feedback NOT submitted"
             print("Hey")
         except Exception as e:
             # Print the exception details for debugging
