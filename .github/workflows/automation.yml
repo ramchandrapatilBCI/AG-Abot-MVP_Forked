@@ -38,7 +38,7 @@ jobs:
           pip install allure-python-commons==2.13.2
           pip install -U deepeval
           pip install telnetlib3
-          pip install pytest-allure-adaptor
+#          pip install pytest-allure-adaptor
 
 #      - name: Install other dependencies
 #        run: |
