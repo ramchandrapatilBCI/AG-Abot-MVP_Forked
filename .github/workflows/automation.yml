@@ -72,5 +72,5 @@ jobs:
           allure_results: ../reports
           allure_report: ../reports
           gh_pages: gh-pages
-          allure_history: allure-history
+          allure_history: allure-report
 
