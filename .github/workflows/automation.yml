@@ -52,6 +52,7 @@ jobs:
         run: |
           cd Tests/
           pytest test_LoginLogout_test.py --alluredir=../reports
+          allure serve ../reports
 
       - name: Set Output
         id: results
