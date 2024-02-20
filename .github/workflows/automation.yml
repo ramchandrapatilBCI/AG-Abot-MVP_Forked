@@ -58,7 +58,7 @@ jobs:
         working-directory: allure-results
         if: always()
         run: |
-          echo GIT_BRANCH=${{ github.head_ref || github.ref_name }}  >> environment.properties
+          echo "Hello"
           - name: Allure results
             uses: simple-elf/allure-report-action@master
             if: always()
