@@ -56,7 +56,7 @@ jobs:
 
       - name: Set Output
         id: results
-        run: echo "::set-output name=artifactPath::../reports"
+        run: echo "::set-output name=artifactPath::reports"
 
       - name: Upload test reports
         uses: actions/upload-artifact@v2
