@@ -22,6 +22,7 @@ class TestLogin:
         web_driver.implicitly_wait(15)
         yield web_driver
         web_driver.quit()
+        web_driver.stop_client()
 
     @pytest.fixture
     def driver1(self):
