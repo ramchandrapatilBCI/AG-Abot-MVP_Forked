@@ -177,8 +177,8 @@ class ChainlitEmitter(BaseChainlitEmitter):
             try:
                 await data_layer.update_thread(
                     thread_id=self.session.thread_id,
+                    name=interaction,
                     user_id=user_id,
-                    metadata={"name": interaction},
                 )
             except Exception as e:
                 logger.error(f"Error updating thread: {e}")
@@ -242,7 +242,7 @@ class ChainlitEmitter(BaseChainlitEmitter):
             ] = None
 
             if user_res:
-                interaction = None
+                interaction: Union[str, None] = None
                 if spec.type == "text":
                     message_dict_res = cast(StepDict, user_res)
                     await self.process_user_message(
