@@ -341,7 +341,7 @@ async def init_db():
         )
     except asyncpg.PostgresError as e:
         # Handle the exception and raise a ConnectionError
-        logging.error(f"Error connecting to the database: {e}")
+        logging.exception(f"Error connecting to the database: {e}")
         raise ConnectionError("Failed to connect to the database.") from e
 
 

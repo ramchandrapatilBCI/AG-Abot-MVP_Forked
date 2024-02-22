@@ -10,7 +10,7 @@ session_timeout = 9999999
 
 # Enable third parties caching (e.g LangChain cache)
 cache = true
-
+show_readme_as_default = false
 # Follow symlink for asset mount (see https://github.com/Chainlit/chainlit/issues/317)
 # follow_symlink = false
 
@@ -72,4 +72,4 @@ hide_cot = true
 
 
 [meta]
-generated_by = "1.0.0"
+generated_by = "1.0.2"

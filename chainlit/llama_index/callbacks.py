@@ -36,19 +36,17 @@ class LlamaIndexCallbackHandler(TokenCountingHandler):
         )
         self.context = context_var.get()
 
-        if self.context.current_step:
-            self.root_parent_id = self.context.current_step.id
-        elif self.context.session.root_message:
-            self.root_parent_id = self.context.session.root_message.id
-        else:
-            self.root_parent_id = None
-
         self.steps = {}
 
     def _get_parent_id(self, event_parent_id: Optional[str] = None) -> Optional[str]:
         if event_parent_id and event_parent_id in self.steps:
             return event_parent_id
-        return self.root_parent_id
+        elif self.context.current_step:
+            return self.context.current_step.id
+        elif self.context.session.root_message:
+            return self.context.session.root_message.id
+        else:
+            return None
 
     def _restore_context(self) -> None:
         """Restore Chainlit context in the current thread
@@ -136,7 +134,9 @@ class LlamaIndexCallbackHandler(TokenCountingHandler):
 
             if formatted_messages:
                 messages = [
-                    GenerationMessage(role=m.role.value, formatted=m.content)  # type: ignore[arg-type]
+                    GenerationMessage(
+                        role=m.role.value, content=m.content or ""  # type: ignore
+                    )
                     for m in formatted_messages
                 ]
             else:
@@ -153,13 +153,19 @@ class LlamaIndexCallbackHandler(TokenCountingHandler):
 
             token_count = self.total_llm_token_count or None
 
-            if messages:
+            if messages and isinstance(response, ChatResponse):
+                msg: ChatMessage = response.message
                 step.generation = ChatGeneration(
-                    messages=messages, completion=content, token_count=token_count
+                    messages=messages,
+                    message_completion=GenerationMessage(
+                        role=msg.role.value,  # type: ignore
+                        content=content,
+                    ),
+                    token_count=token_count,
                 )
             elif formatted_prompt:
                 step.generation = CompletionGeneration(
-                    formatted=formatted_prompt,
+                    prompt=formatted_prompt,
                     completion=content,
                     token_count=token_count,
                 )
