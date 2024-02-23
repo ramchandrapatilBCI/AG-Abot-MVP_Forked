@@ -70,14 +70,62 @@ Please adhere to the provided urgent need guidelines and exclusion criteria, mai
 
 
 # EIP (Early Intervention Prevention) Exclusion Criteria:
-    - Person immediately end of life – needing support
-    - Safeguarding
-    - Night support required
-    - Person only requires a period of respite
-    - Request for poc/ support at home – funded via Continuing Health Care
-    - Minor tweaks to an existing POC
-    - Person in long term residential / nursing setting
-    - Request for moving and handling assessment / re-assessment by formal carers
+    1. **Person immediately end of life – needing support**
+       - **Definition:** This refers to individuals who are in the very final stages of their life, where the focus is on palliative care rather than long-term intervention.
+       - **Examples:**
+         - A terminally ill cancer patient with weeks to live, requiring hospice care.
+         - A person with advanced heart failure needing palliative support to manage end-of-life symptoms.
+         - An individual with late-stage neurodegenerative disease, like advanced ALS, needing comfort care measures.
+    
+    2. **Safeguarding**
+       - **Definition:** Safeguarding involves protecting adults at risk from abuse, neglect, or harm.
+       - **Examples:**
+         - An elderly person experiencing physical abuse from a family member.
+         - An adult with disabilities facing financial exploitation by a caregiver.
+         - A vulnerable adult being neglected or denied basic care needs.
+    
+    3. **Night support required**
+       - **Definition:** This criterion excludes individuals who specifically need overnight care or supervision.
+       - **Examples:**
+         - A person with dementia who wanders at night, requiring constant supervision.
+         - An individual with severe sleep disorders needing overnight monitoring.
+         - A patient with complex medical conditions requiring round-the-clock care.
+    
+    4. **Person only requires a period of respite**
+       - **Definition:** Respite care provides temporary relief for primary caregivers. This applies to those only needing short-term care breaks, not ongoing intervention.
+       - **Examples:**
+         - A caregiver needing a week off from caring for a spouse with chronic illness.
+         - Parents of a child with severe disabilities seeking a weekend break.
+         - A family arranging a short-term stay in a care facility for an elderly relative for a holiday.
+    
+    5. **Request for POC (Plan of Care)/support at home – funded via Continuing Health Care**
+       - **Definition:** This refers to individuals whose care needs are funded through Continuing Health Care (CHC), focusing on those with complex medical conditions managed at home.
+       - **Examples:**
+         - A patient with chronic respiratory failure on ventilator support at home.
+         - An individual with severe multiple sclerosis receiving comprehensive home-based care.
+         - A person with complex wound care needs managed at home by professional nurses.
+    
+    6. **Minor tweaks to an existing POC (Plan of Care)**
+       - **Definition:** Those who are already receiving care via a POC and only need slight adjustments to their current care plan.
+       - **Examples:**
+         - Adjusting the times a home health aide visits for a person with stable needs.
+         - Slightly modifying the dietary plan for an individual with diabetes.
+         - Small adjustments in activities and programs to promote social interaction and prevent isolation.
+    
+    7. **Person in long term residential / nursing setting**
+       - **Definition:** individuals already living in long-term care facilities.
+       - **Examples:**
+         - A resident in a nursing home receiving comprehensive care for advanced Alzheimer’s disease.
+         - An individual in a residential care facility for adults with severe intellectual disabilities.
+         - A person in a long-term rehabilitation center following a stroke.
+    
+    8. **Request for moving and handling assessment / re-assessment by formal carers**
+       - **Definition:** This refers to the need for evaluation or re-evaluation of how an individual is moved or handled, typically due to mobility issues, to ensure safety and proper care.
+       - **Examples:**
+         - Assessing the need for a new type of wheelchair or mobility aid for an individual with paralysis.
+         - Re-assessment of hoisting techniques for a person who has had a significant change in weight or mobility.
+         - Evaluating the need for additional equipment or adjustments in care techniques for safe transfer of a person with severe arthritis.
+
 
 
 # Social Care Act Guidelines
