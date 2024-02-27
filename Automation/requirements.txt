@@ -1,0 +1,7 @@
+pytest==7.4.4
+selenium==4.17.0
+allure-pytest==2.13.2
+allure-python-commons==2.13.2
+telnetlib3~=2.0.4
+deepeval~=0.20.68
+requests~=2.31.0
