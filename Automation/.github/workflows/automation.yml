@@ -1,9 +1,9 @@
 name: ABOTautomationTests
 
 on:
-  workflow_dispatch:
   push:
-    branches: [ "ABOTAutoPytest" ]
+    branches:
+      - ABOTAutoPytest
 
 jobs:
   automation:
