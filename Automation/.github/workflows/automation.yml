@@ -1,4 +1,4 @@
-name: ABOTautomation
+name: ABOTautomationTests
 
 on:
   push:
