@@ -1,0 +1,77 @@
+name: ABOTautomationTests
+
+on:
+  push:
+    branches:
+      - ABOTAutoPytest
+
+jobs:
+  automation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: install chrome
+        run: |
+          sudo -E apt -f install -y
+          sudo -E apt-get install -y wget
+          sudo -E wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo -E apt-get install -y google-chrome-stable
+      - name: Set up Python 3.11.7
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.11.7"
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run:
+          pip install --upgrade pip
+          pip install pytest
+          pip install typing_extensions==4.7.1 --upgrade
+          pip install selenium==4.17.0
+          pip install allure-pytest
+          pip install allure-python-commons==2.13.2
+          pip install -U deepeval
+          pip install telnetlib3
+
+      - name: Install other dependencies
+        run: |
+          if [ -f "requirements.txt" ]; then
+            pip install -r requirements.txt
+          fi
+
+      - name: Create reports directory
+        run: mkdir -p reports
+
+      - name: Run tests and generate allure reports
+        run: |
+            cd Tests/
+            python -m pytest test_UITests_test.py --alluredir=../reports
+
+      - name: Test marketplace action
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        id: allure-report
+        with:
+          allure_results: build/allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+
+      - name: Deploy report to Github Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v2
+        env:
+          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: allure-history
+
+      - name: Post the link to the report
+        if: always()
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          context: 'Test report'
+          state: 'success'
+          sha: ${{ github.event.pull_request.head.sha }}
+          target_url: simple-elf.github.io/github-allure-history/${{ github.run_number }}
