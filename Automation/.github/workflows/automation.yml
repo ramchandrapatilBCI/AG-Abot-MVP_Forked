@@ -1,9 +1,9 @@
 name: ABOTautomationTests
 
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - ABOTAutoPytest
+    branches: [ "ABOTAutoPytest" ]
 
 jobs:
   automation:
@@ -42,6 +42,11 @@ jobs:
 
       - name: Create reports directory
         run: mkdir -p reports
+
+      - name: Run tests and generate allure reports
+        run: |
+            cd Tests/
+            python -m pytest test_UITests_test.py --alluredir=../reports
 
       - name: Test marketplace action
         uses: simple-elf/allure-report-action@master
