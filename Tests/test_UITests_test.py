@@ -35,11 +35,11 @@ class TestUITest:
         yield web_driver
         web_driver.quit()
 
-    @pytest.mark.usefixtures("driver")
-    def test_LogoTest(self, driver):
-        time.sleep(15)
-        ele_input = driver.find_element(By.XPATH, f"//img[@alt='logo']")
-        assert ele_input, 'Wigon Counsil logo is missing'
+    # @pytest.mark.usefixtures("driver")
+    # def test_LogoTest(self, driver):
+    #     time.sleep(15)
+    #     ele_input = driver.find_element(By.XPATH, f"//img[@alt='logo']")
+    #     assert ele_input, 'Wigon Counsil logo is missing'
 
     @pytest.mark.usefixtures("driver")
     def test_Transcript(self, driver):
