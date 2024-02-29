@@ -9,12 +9,13 @@ jobs:
   automation:
     runs-on: ubuntu-latest
     steps:
-      - name: install chrome
+      - name: Install Chrome
         run: |
           sudo -E apt -f install -y
           sudo -E apt-get install -y wget
           sudo -E wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo -E apt-get install -y google-chrome-stable
+
       - name: Set up Python 3.11.7
         uses: actions/setup-python@v3
         with:
@@ -43,17 +44,16 @@ jobs:
       - name: Create reports directory
         run: mkdir -p reports
 
-      - name: Run tests and generate allure reports
+      - name: Run tests and generate Allure reports
         run: |
-            cd Tests/
-            python -m pytest test_UITests_test.py --alluredir=../reports
+          cd Tests/
+          pytest --alluredir=../reports
 
       - name: Generate Allure report
-        run: |
-          allure generate allure-results --clean -o allure-report
+        run: allure generate reports --clean -o allure-report
 
-          - name: Deploy Allure report
-            uses: actions/upload-artifact@v1
-            with:
-              name: allure-report
-              path: reports
+      - name: Publish Allure report
+        uses: actions/upload-artifact@v2
+        with:
+          name: allure-report
+          path: allure-report

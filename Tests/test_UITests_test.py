@@ -37,7 +37,7 @@ class TestUITest:
 
     @pytest.mark.usefixtures("driver")
     def test_LogoTest(self, driver):
-        time.sleep(10)
+        time.sleep(15)
         ele_input = driver.find_element(By.XPATH, f"//img[@alt='logo']")
         assert ele_input, 'Wigon Counsil logo is missing'
 
