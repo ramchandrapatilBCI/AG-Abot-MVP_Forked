@@ -1,1 +1,0 @@
-{"name": "test_contextual_Hi[chrome]", "status": "skipped", "parameters": [{"name": "driver_init", "value": "'chrome'"}], "start": 1708593115960, "stop": 1708593115960, "uuid": "6613c2f5-b583-4a2d-a2a3-90d55a0c44fb", "testCaseId": "d0d76cba776c795bffc8814054c36040", "fullName": "Tests.test_UITestContextRelevency_test#test_contextual_Hi"}

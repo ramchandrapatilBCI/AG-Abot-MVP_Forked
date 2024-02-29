@@ -36,7 +36,7 @@ jobs:
       - name: Run tests and generate allure reports
         run: |
           cd Tests/
-          python -m pytest test_UITests_test.py --alluredir=../reports
+          python -m pytest test_UITests_test.py --alluredir=reports
 
       - name: Set Output
         id: results
