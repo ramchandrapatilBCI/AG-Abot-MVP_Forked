@@ -22,6 +22,7 @@ jobs:
           pip install --upgrade pip
           pip install pytest
           pip install allure-pytest
+          pip install python-dotenv
 
       - name: Install other dependencies
         run: |
@@ -36,6 +37,10 @@ jobs:
         run: |
           cd Tests/
           python -m pytest test_UITests_test.py --alluredir=../reports
+
+      - name: Set Output
+        id: results
+        run: echo "::set-output name=artifactPath::reports"
 
       - name: Generate Allure report
         run: allure generate reports --clean -o allure-report
