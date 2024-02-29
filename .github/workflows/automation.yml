@@ -3,7 +3,7 @@ name: ABOTautomation
 on:
   push:
     branches:
-      - dev
+      - ABOTAutoPytest
 
 jobs:
   automation:
