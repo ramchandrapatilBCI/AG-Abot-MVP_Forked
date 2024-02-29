@@ -37,6 +37,7 @@ class TestUITest:
 
     @pytest.mark.usefixtures("driver")
     def test_LogoTest(self, driver):
+        time.sleep(10)
         ele_input = driver.find_element(By.XPATH, f"//img[@alt='logo']")
         assert ele_input, 'Wigon Counsil logo is missing'
 
@@ -55,7 +56,7 @@ class TestUITest:
 
     @pytest.mark.usefixtures("driver")
     def test_NewChatPopupWindow(self, driver):
-        driver.implicitly_wait(15)
+        time.sleep(5)
         driver.find_element(By.ID, f"new-chat-button").click()
         driver.implicitly_wait(15)
         popup = driver.find_element(By.ID, "new-chat-dialog")
@@ -241,7 +242,7 @@ class TestUITest:
 
     @pytest.mark.usefixtures("driver")
     def test_DeleteOneChatHistory(self, driver):
-        driver.implicitly_wait(15)
+        time.sleep(5)
         try:
             chatElement = driver.find_element(By.XPATH,
                                               f"//*[contains(text(), 'Today')]/following::a[starts-with(@id,'thread')]")
@@ -464,13 +465,13 @@ class TestUITest:
     @pytest.mark.usefixtures("driver")
     def test_EnterFeeddbackNOTHelpfull(self, driver):
         try:
-            driver.implicitly_wait(15)
+            time.sleep(5)
             chatElements = driver.find_elements(By.XPATH,
                                                 f"//*[contains(text(), 'Today')]/following::a[starts-with(@id,'thread')]")
             print("==========================================================")
             print(len(chatElements))
             # Wait for a short time, if needed
-            driver.implicitly_wait(15)
+            time.sleep(5)
             # Click on the element after the hover
             chat_input = driver.find_element(By.ID, f"chat-input")
             ActionChains(driver).move_to_element(chat_input).click(chat_input).perform()
@@ -509,7 +510,7 @@ class TestUITest:
     @pytest.mark.usefixtures("driver")
     def test_EnterFeedbackHelpfullConfirmMsg(self, driver):
         try:
-            driver.implicitly_wait(15)
+            time.sleep(5)
             chatElements = driver.find_elements(By.XPATH,
                                                 f"//*[contains(text(), 'Today')]/following::a[starts-with(@id,'thread')]")
             print("==========================================================")
@@ -555,7 +556,7 @@ class TestUITest:
     @pytest.mark.usefixtures("driver")
     def test_EnterFeedbackNOTHelpfullConfirmMsg(self, driver):
         try:
-            driver.implicitly_wait(15)
+            time.sleep(5)
             chatElements = driver.find_elements(By.XPATH,
                                                 f"//*[contains(text(), 'Today')]/following::a[starts-with(@id,'thread')]")
             print("==========================================================")
