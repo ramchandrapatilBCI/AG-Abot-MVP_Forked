@@ -50,7 +50,7 @@ class TestUITest:
         driver.implicitly_wait(15)
         chat_input.send_keys("jfhksdhkfsd jkhdskjhfdskh dsjdsjkhkh")
         chat_input.send_keys(Keys.ENTER)
-        time.sleep(10)
+        time.sleep(15)
         driver.find_element(By.XPATH, "//div[@id='actions-list']").click()
         ele_input = driver.find_element(By.XPATH, f"//code")
         assert ele_input, 'Transcript is NOT generated'
