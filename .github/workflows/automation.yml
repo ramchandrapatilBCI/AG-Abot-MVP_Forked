@@ -57,9 +57,15 @@ jobs:
           cd Tests/
           python -m pytest test_UITests_test.py --alluredir=reports
 
-      - name: Set Output
-        id: results
-        run: echo "::set-output name=artifactPath::reports"
+      - name: Save state
+        run: echo "{artifactPath}={reports}" >> $GITHUB_STATE
+
+      - name: Set output
+        run: echo "{artifactPath}={reports}" >> $GITHUB_OUTPUT
+
+#      - name: Set Output
+#        id: results
+#        run: echo "::set-output name=artifactPath::reports"
 
       - name: Generate Allure report
         run: allure generate reports --clean -o allure-report
