@@ -9,6 +9,12 @@ jobs:
   automation:
     runs-on: ubuntu-latest
     steps:
+      - name: install chrome
+        run: |
+          sudo -E apt -f install -y
+          sudo -E apt-get install -y wget
+          sudo -E wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo -E apt-get install -y google-chrome-stable
       - name: Set up Python 3.11.7
         uses: actions/setup-python@v3
         with:
