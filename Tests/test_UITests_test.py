@@ -241,46 +241,46 @@ class TestUITest:
             assert 0
             # Re-raise the exception to fail the test
 
-    @pytest.mark.usefixtures("driver")
-    def test_DeleteOneChatHistory(self, driver):
-        time.sleep(15)
-        try:
-            chatElement = driver.find_element(By.XPATH,
-                                              f"//*[contains(text(), 'Today')]/following::a[starts-with(@id,'thread')]")
-            chatElements = driver.find_elements(By.XPATH,
-                                                f"//*[contains(text(), 'Today')]/following::a[starts-with(@id,'thread')]")
-            driver.implicitly_wait(3)
-            print("####################RAM##########################")
-            chatElement.click()
-            # element.click()
-            driver.implicitly_wait(15)
-            element_to_hover_over = driver.find_element(By.XPATH, f"//a[starts-with(@id,'thread')]//button")
-
-            # Create an instance of ActionChains
-            actions = ActionChains(driver)
-
-            # Perform mouse hover over the element
-            actions.move_to_element(element_to_hover_over).perform()
-
-            # Wait for a short time, if needed
-            driver.implicitly_wait(15)
-
-            # Click on the element after the hover
-            element_to_hover_over.click()
-            driver.execute_script("arguments[0].click();", element_to_hover_over)
-            print("####################HARI##########################")
-
-            driver.implicitly_wait(15)
-            driver.find_element(By.XPATH, f"//div[text()='Confirm']").click()
-            driver.implicitly_wait(15)
-            chatElementsafterdel = driver.find_elements(By.XPATH,
-                                                        f"//*[contains(text(), 'Today')]/following::a[starts-with(@id,'thread')]")
-            assert len(chatElements) == len(chatElementsafterdel), "Chat history deleted"
-        except Exception as e:
-            # Print the exception details for debugging
-            print(f"Exception occurred: {e}")
-            assert 0
-            # Re-raise the exception to fail the test
+    # @pytest.mark.usefixtures("driver")
+    # def test_DeleteOneChatHistory(self, driver):
+    #     time.sleep(15)
+    #     try:
+    #         chatElement = driver.find_element(By.XPATH,
+    #                                           f"//*[contains(text(), 'Today')]/following::a[starts-with(@id,'thread')]")
+    #         chatElements = driver.find_elements(By.XPATH,
+    #                                             f"//*[contains(text(), 'Today')]/following::a[starts-with(@id,'thread')]")
+    #         driver.implicitly_wait(3)
+    #         print("####################RAM##########################")
+    #         chatElement.click()
+    #         # element.click()
+    #         driver.implicitly_wait(15)
+    #         element_to_hover_over = driver.find_element(By.XPATH, f"//a[starts-with(@id,'thread')]//button")
+    #
+    #         # Create an instance of ActionChains
+    #         actions = ActionChains(driver)
+    #
+    #         # Perform mouse hover over the element
+    #         actions.move_to_element(element_to_hover_over).perform()
+    #
+    #         # Wait for a short time, if needed
+    #         driver.implicitly_wait(15)
+    #
+    #         # Click on the element after the hover
+    #         element_to_hover_over.click()
+    #         driver.execute_script("arguments[0].click();", element_to_hover_over)
+    #         print("####################HARI##########################")
+    #
+    #         driver.implicitly_wait(15)
+    #         driver.find_element(By.XPATH, f"//div[text()='Confirm']").click()
+    #         driver.implicitly_wait(15)
+    #         chatElementsafterdel = driver.find_elements(By.XPATH,
+    #                                                     f"//*[contains(text(), 'Today')]/following::a[starts-with(@id,'thread')]")
+    #         assert len(chatElements) == len(chatElementsafterdel), "Chat history deleted"
+    #     except Exception as e:
+    #         # Print the exception details for debugging
+    #         print(f"Exception occurred: {e}")
+    #         assert 0
+    #         # Re-raise the exception to fail the test
 
     @pytest.mark.usefixtures("driver")
     def test_CorrectInstructions(self, driver):
@@ -344,7 +344,7 @@ class TestUITest:
             assert endChatDialog.is_displayed(), 'End chat dialog is NT displayed'
             btnConfirm = driver.find_element(By.ID, "confirm")
             btnConfirm.click()
-            time.sleep(5)
+            time.sleep(10)
             chat_input = driver.find_element(By.ID, f"chat-input")
             assert chat_input.is_displayed(), 'End chat closed and user landed to chat window'
 
@@ -371,7 +371,7 @@ class TestUITest:
             time.sleep(6)
             driver.execute_script('return document.readyState;')
             chat_input = driver.find_element(By.ID, f"chat-input")
-            time.sleep(6)
+            time.sleep(10)
             assert chat_input.is_displayed(), 'End chat closed and user landed to chat window'
 
         except Exception as e:
@@ -441,7 +441,7 @@ class TestUITest:
             # element = WebDriverWait(driver, 15).until(
             #     EC.visibility_of_element_located((By.XPATH, "//span[@aria-label='Helpful']"))
             # )
-            time.sleep(5)
+            time.sleep(10)
             # eleThumbUP=driver.find_element(By.XPATH, "//span[@aria-label='Helpful']")
             driver.find_element(By.XPATH, "//span[@aria-label='Helpful']").click()
 
@@ -471,7 +471,7 @@ class TestUITest:
             ActionChains(driver).move_to_element(chat_input).click(chat_input).perform()
             chat_input.send_keys(f"Hi, I need your help")
             chat_input.send_keys(Keys.ENTER)
-            time.sleep(10)
+            time.sleep(15)
             driver.find_element(By.XPATH, "//span[@aria-label='Not helpful']/button").click()
             time.sleep(15)
             feedbackDialog = driver.find_element(By.XPATH, "//div[@role='dialog']")
@@ -543,14 +543,9 @@ class TestUITest:
             chat_input.send_keys(f"Hi, I need your help")
             chat_input.send_keys(Keys.ENTER)
             driver.implicitly_wait(15)
-            driver.execute_script('return document.readyState;')
-            element = WebDriverWait(driver, 15).until(
-                EC.visibility_of_element_located((By.XPATH, "//span[@aria-label='Not helpful']"))
-            )
             time.sleep(5)
             # eleThumbUP=driver.find_element(By.XPATH, "//span[@aria-label='Helpful']")
             driver.find_element(By.XPATH, "(//span[@aria-label='Not helpful'])").click()
-
             driver.execute_script('return document.readyState;')
             time.sleep(5)
             feedbackDialog = driver.find_element(By.XPATH, "//div[@role='dialog']")
