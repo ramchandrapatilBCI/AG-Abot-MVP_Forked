@@ -21,15 +21,15 @@ class TestUITest:
         web_driver.get('https://abot-test-001.azurewebsites.net/login/')
         web_driver.execute_script('return document.readyState;')
         web_driver.maximize_window()
-        web_driver.implicitly_wait(15)
+        time.sleep(10)
         login_button = web_driver.find_element(By.XPATH, "//div[@class='MuiStack-root css-eb1amy']")
         login_button.click()
-        web_driver.implicitly_wait(15)
+        time.sleep(10)
         web_driver.find_element(By.XPATH, "//input[@name='username']").send_keys("testing@cura.com")
         web_driver.find_element(By.NAME, "action").click()
         web_driver.find_element(By.XPATH, "//input[@name='password']").send_keys('eV030UqN')
         web_driver.find_element(By.NAME, "action").click()
-        web_driver.implicitly_wait(10)
+        time.sleep(10)
         print("printing Title->", web_driver.title)
         assert web_driver.title == 'Cura'
         yield web_driver
