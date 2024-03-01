@@ -9,7 +9,7 @@ jobs:
   automation:
     runs-on: ubuntu-latest
     steps:
-      - name: install chrome
+      - name: Install Chrome
         run: |
           sudo -E apt -f install -y
           sudo -E apt-get install -y wget
