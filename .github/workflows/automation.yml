@@ -9,6 +9,7 @@ jobs:
   automation:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Install Chrome
         run: |
           sudo -E apt -f install -y
