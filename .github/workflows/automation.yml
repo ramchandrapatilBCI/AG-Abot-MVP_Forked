@@ -24,7 +24,7 @@ jobs:
           rm allure-2.15.0.tgz
           rm -rf allure-2.15.0
       - name: Add Allure to PATH
-        run: /usr/local/bin/
+        run: echo "/usr/local/bin/"
 
       - name: Set up Python 3.11.7
         uses: actions/setup-python@v3
