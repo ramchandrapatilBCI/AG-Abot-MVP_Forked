@@ -17,16 +17,12 @@ jobs:
           wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo dpkg -i google-chrome-stable_current_amd64.deb
           sudo apt -f install -y
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-            java-version: '11'
-
       - name: Install Allure
         run: |
-                sudo apt-add-repository ppa:qameta/allure
-                sudo apt-get update 
-                sudo apt-get install allure
+          wget -O allure-2.17.1.tgz https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.17.1/allure-commandline-2.17.1.tgz
+          tar -zxvf allure-2.17.1.tgz -C /opt
+          export PATH=$PATH:/opt/allure-2.17.1/bin
+#          echo 'export PATH=$PATH:/opt/allure-2.17.1/bin' >> $GITHUB_ENV
       - name: Set up Python 3.11.7
         uses: actions/setup-python@v3
         with:
@@ -37,6 +33,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install pytest
+          pip install pytest-allure-adaptor
           pip install typing_extensions==4.7.1 --upgrade
           pip install selenium==4.17.0
           pip install allure-pytest
