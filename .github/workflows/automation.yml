@@ -35,8 +35,8 @@ jobs:
           pip install pytest
           pip install typing_extensions==4.7.1 --upgrade
           pip install selenium==4.17.0
-#          pip install allure-pytest
-#          pip install allure-python-commons==2.13.2
+          pip install allure-pytest
+          pip install allure-python-commons==2.13.2
           pip install -U deepeval
           pip install telnetlib3
           if [ -f "requirements.txt" ]; then
