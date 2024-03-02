@@ -6,10 +6,15 @@ from selenium import webdriver
 from selenium.webdriver import Keys, ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-
+from collections.abc import Mapping
 
 class TestUITest:
 
+    def __init__(self, data):
+        if isinstance(data, Mapping):
+            self.data = data
+        else:
+            raise ValueError("data must be a mapping")
     @pytest.fixture
     def driver(self):
         options = webdriver.ChromeOptions()
