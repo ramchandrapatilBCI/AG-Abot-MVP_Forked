@@ -51,7 +51,7 @@ jobs:
           python -m pytest test_UITests_test.py --alluredir=../reports
       - name: Set Output
         id: results
-        run: echo "::set-output name=artifactPath::reports"
+        run: echo "::set-output name=artifactPath::../reports"
       - name: Generate Allure report
         run: allure generate ../reports --clean -o ../allure-report
       - name: Publish Allure report

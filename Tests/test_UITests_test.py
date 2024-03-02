@@ -10,11 +10,11 @@ from collections.abc import Mapping
 
 class TestUITest:
 
-    def __init__(self, data):
-        if isinstance(data, Mapping):
-            self.data = data
-        else:
-            raise ValueError("data must be a mapping")
+    # def __init__(self, data):
+    #     if isinstance(data, Mapping):
+    #         self.data = data
+    #     else:
+    #         raise ValueError("data must be a mapping")
     @pytest.fixture
     def driver(self):
         options = webdriver.ChromeOptions()
