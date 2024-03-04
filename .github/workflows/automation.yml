@@ -71,12 +71,12 @@ jobs:
 #          name: code-coverage-report
 #          path: output/test/code-coverage.html
 
-      - name: Save state
-        run: echo "{artifactPath}={reports}" >> $GITHUB_STATE
-
-      - name: Set output
-        run: echo "{artifactPath}={reports}" >> $GITHUB_OUTPUT
-
+#      - name: Save state
+#        run: echo "{artifactPath}={reports}" >> $GITHUB_STATE
+#
+#      - name: Set output
+#        run: echo "{artifactPath}={reports}" >> $GITHUB_OUTPUT
+#
       - name: Set Output
         id: results
         run: echo "::set-output name=artifactPath::reports"
