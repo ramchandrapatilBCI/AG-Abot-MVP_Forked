@@ -10,20 +10,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Chrome
+      - name: install chrome
         run: |
-          sudo apt update
-          sudo apt install -y wget
-          wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo dpkg -i google-chrome-stable_current_amd64.deb
-          sudo apt -f install -y
+          sudo -E apt -f install -y
+          sudo -E apt-get install -y wget
+          sudo -E wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo -E apt-get install -y google-chrome-stable
       - name: Install Allure
         run: |
-          wget -O allure-2.17.1.tgz https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.17.1/allure-commandline-2.17.1.tgz
-          tar -zxvf allure-2.17.1.tgz -C /opt
-          export PATH=$PATH:/opt/allure-2.17.1/bin
-          pwd
-#          echo 'export PATH=$PATH:/opt/allure-2.17.1/bin' >> $GITHUB_ENV
+          wget -O allure-2.15.0.tgz https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.15.0/allure-commandline-2.15.0.tgz
+          tar -zxvf allure-2.15.0.tgz
+          sudo mv allure-2.15.0/bin/allure /usr/local/bin/
+          rm allure-2.15.0.tgz
+          rm -rf allure-2.15.0
+      - name: Add Allure to PATH
+        run: echo "/usr/local/bin/"
+
       - name: Set up Python 3.11.7
         uses: actions/setup-python@v3
         with:
@@ -31,26 +33,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Install dependencies
-        run: |
+        run:
           pip install --upgrade pip
           pip install pytest
-          pip install pytest-allure-adaptor
           pip install typing_extensions==4.7.1 --upgrade
           pip install selenium==4.17.0
           pip install allure-pytest
           pip install allure-python-commons==2.13.2
           pip install -U deepeval
           pip install telnetlib3
+
+      - name: Install other dependencies
+        run: |
           if [ -f "requirements.txt" ]; then
             pip install -r requirements.txt
           fi
+
       - name: Create reports directory
         run: mkdir -p reports
-      - name: Run tests and generate Allure reports
+
+      - name: Run tests and generate allure reports
         run: |
           cd Tests/
-          python -m pytest test_UITests_test.py --alluredir=../reports
-      - name: Archive production artifacts
+          python -m pytest test_UITests_test.py --alluredir=reports
+	  - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist-without-markdown
@@ -62,11 +68,19 @@ jobs:
         with:
           name: code-coverage-report
           path: output/test/code-coverage.html
-      - name: Set Output
-        id: results
-        run: echo "::set-output name=artifactPath::../reports"
+
+      - name: Save state
+        run: echo "{artifactPath}={reports}" >> $GITHUB_STATE
+
+      - name: Set output
+        run: echo "{artifactPath}={reports}" >> $GITHUB_OUTPUT
+
+#      - name: Set Output
+#        id: results
+#        run: echo "::set-output name=artifactPath::reports"
+
       - name: Generate Allure report
-        run: allure generate ../reports --clean -o ../allure-report
+        run: allure generate reports --clean -o allure-report
       - name: Publish Allure report
         uses: actions/upload-artifact@v2
         with:
