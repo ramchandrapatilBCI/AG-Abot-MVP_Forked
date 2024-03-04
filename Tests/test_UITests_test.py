@@ -53,7 +53,7 @@ class TestUITest:
         ActionChains(driver).move_to_element(chat_input).click(chat_input).perform()
         chat_input.send_keys(Keys.ENTER)
         driver.implicitly_wait(15)
-        chat_input.send_keys("jfhksdhkfsd jkhdskjhfdskh dsjdsjkhkh")
+        chat_input.send_keys("jfhksdhkfsd jkhdskjhfdskh dsjdsjksshkh")
         chat_input.send_keys(Keys.ENTER)
         time.sleep(15)
         driver.find_element(By.XPATH, "//div[@id='actions-list']").click()
