@@ -88,10 +88,11 @@ jobs:
 #        with:
 #          name: allure-report
 #          path: allure-report
-      - name: Publish Test Results
+      - name: Run tests and generate allure reports
         run: |
           cd Tests
           cd reports
+      - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
