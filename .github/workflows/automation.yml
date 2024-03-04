@@ -57,34 +57,34 @@ jobs:
           cd Tests/
           python -m pytest test_UITests_test.py --alluredir=reports
 
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-without-markdown
-          path: |
-            dist
-            !dist/**/*.md
-
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v4
-        with:
-          name: code-coverage-report
-          path: output/test/code-coverage.html
-
-#      - name: Save state
-#        run: echo "{artifactPath}={reports}" >> $GITHUB_STATE
-#
-#      - name: Set output
-#        run: echo "{artifactPath}={reports}" >> $GITHUB_OUTPUT
-#
-##      - name: Set Output
-##        id: results
-##        run: echo "::set-output name=artifactPath::reports"
-#
-#      - name: Generate Allure report
-#        run: allure generate reports --clean -o allure-report
-#      - name: Publish Allure report
-#        uses: actions/upload-artifact@v2
+#      - name: Archive production artifacts
+#        uses: actions/upload-artifact@v4
 #        with:
-#          name: allure-report
-#          path: allure-report
+#          name: dist-without-markdown
+#          path: |
+#            dist
+#            !dist/**/*.md
+#
+#      - name: Archive code coverage results
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: code-coverage-report
+#          path: output/test/code-coverage.html
+
+      - name: Save state
+        run: echo "{artifactPath}={reports}" >> $GITHUB_STATE
+
+      - name: Set output
+        run: echo "{artifactPath}={reports}" >> $GITHUB_OUTPUT
+
+      - name: Set Output
+        id: results
+        run: echo "::set-output name=artifactPath::reports"
+
+      - name: Generate Allure report
+        run: allure generate reports --clean -o allure-report
+      - name: Publish Allure report
+        uses: actions/upload-artifact@v2
+        with:
+          name: allure-report
+          path: allure-report
