@@ -22,6 +22,7 @@ jobs:
           wget -O allure-2.17.1.tgz https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.17.1/allure-commandline-2.17.1.tgz
           tar -zxvf allure-2.17.1.tgz -C /opt
           export PATH=$PATH:/opt/allure-2.17.1/bin
+          pwd
 #          echo 'export PATH=$PATH:/opt/allure-2.17.1/bin' >> $GITHUB_ENV
       - name: Set up Python 3.11.7
         uses: actions/setup-python@v3
@@ -49,6 +50,18 @@ jobs:
         run: |
           cd Tests/
           python -m pytest test_UITests_test.py --alluredir=../reports
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-without-markdown
+          path: |
+            dist
+            !dist/**/*.md
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: output/test/code-coverage.html
       - name: Set Output
         id: results
         run: echo "::set-output name=artifactPath::../reports"
