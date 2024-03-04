@@ -81,13 +81,13 @@ jobs:
         id: results
         run: echo "::set-output name=artifactPath::reports"
 
-      - name: Generate Allure report
-        run: allure generate reports --clean -o allure-report
-      - name: Publish Allure report
-        uses: actions/upload-artifact@v2
-        with:
-          name: allure-report
-          path: allure-report
+#      - name: Generate Allure report
+#        run: allure generate reports --clean -o allure-report
+#      - name: Publish Allure report
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: allure-report
+#          path: allure-report
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
