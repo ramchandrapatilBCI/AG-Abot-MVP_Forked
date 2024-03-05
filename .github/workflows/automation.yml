@@ -53,38 +53,15 @@ jobs:
           cd Tests/
           python -m pytest test_UITests_test.py --alluredir=../reports
 
-#      - name: Set Output
-#        id: results
-#        run: echo "::set-output name=artifactPath::reports"
-#
-#      - name: Publish Test Results
-#        uses: EnricoMi/publish-unit-test-result-action@v2
-#        if: always()
-#        with:
-#          files: |
-#            reports/**/*.xml
-#            reports/**/*.trx
-#            reports/**/*.json
-      - name: Load test report history
-        uses: actions/checkout@v3
-        if: always()
-        continue-on-error: true
-        with:
-          ref: gh-pages
-          path: gh-pages
+      - name: Set Output
+        id: results
+        run: echo "::set-output name=artifactPath::reports"
 
-      - name: Build test report
-        uses: simple-elf/allure-report-action@v1.7
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          gh_pages: gh-pages
-          allure_history: allure-history
-          allure_results: build/allure-results
-
-      - name: Publish test report
-        uses: peaceiris/actions-gh-pages@v3
-        if: always()
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: allure-history
+          files: |
+            reports/**/*.xml
+            reports/**/*.trx
+            reports/**/*.json
