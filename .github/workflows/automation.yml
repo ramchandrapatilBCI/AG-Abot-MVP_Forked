@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install pytest selenium==4.17.0 allure-pytest allure-python-commons==2.15.0 deepeval telnetlib3
+          pip install pytest selenium==4.17.0 allure-pytest allure-python-commons==2.13.2 deepeval telnetlib3
 
       - name: Install other dependencies
         run: |
