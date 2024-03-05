@@ -84,9 +84,9 @@ jobs:
       - name: Generate Allure report
         run: allure generate reports --clean -o allure-report
       - name: Publish Allure report
+        uses: actions/upload-artifact@v2
         run: |
           cd Tests/
-        uses: actions/upload-artifact@v2
         with:
           name: allure-report
           path: reports
