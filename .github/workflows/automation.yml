@@ -62,7 +62,6 @@ jobs:
         if: always()
         with:
           files: |
-            ../reports/**/*.xml
-            ../reports/**/*.trx
-            ../reports/**/*.json
-             ../reports/**/*.html
+            ../reports/*.xml
+            ../reports/*.trx
+            ../reports/*.json
