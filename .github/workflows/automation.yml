@@ -63,5 +63,5 @@ jobs:
         with:
           files: |
             reports/**/*.xml
-            reports/**/*.trx
+            reports/**/*.html
             reports/**/*.json
