@@ -50,14 +50,12 @@ jobs:
 
       - name: Run tests and generate Allure reports
         run: |
-          cd Tests/
           mkdir -p reports
-          python -m pytest test_UITests_test.py --alluredir=./reports
-          allure serve ./reports
-          pwd
+          cd Tests/
+          python -m pytest test_UITests_test.py --alluredir=../reports
+          cd ..
           ls -lh
-          cd reports
-          ls -lh
+          ls -lh reports
 
 #      - name: Set Output
 #        id: results
@@ -68,7 +66,7 @@ jobs:
         if: always()
         with:
           files: |
-            /home/runner/work/AG-Abot-MVP_Forked/AG-Abot-MVP_Forked/Tests/reports/*.xml
-            /home/runner/work/AG-Abot-MVP_Forked/AG-Abot-MVP_Forked/Tests/reports/*.trx
-            /home/runner/work/AG-Abot-MVP_Forked/AG-Abot-MVP_Forked/Tests/reports/*.json
-            /home/runner/work/AG-Abot-MVP_Forked/AG-Abot-MVP_Forked/Tests/reports/*.txt
+            reports/*.xml
+            reports/*.trx
+            reports/*.json
+            reports/*.txt
