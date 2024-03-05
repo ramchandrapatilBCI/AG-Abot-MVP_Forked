@@ -74,7 +74,7 @@ jobs:
         uses: simple-elf/allure-report-action@master
         if: always() # Execute even if previous steps fail
         with:
-          allure_results: ${{ reports }} # Specify the directory containing Allure results
+          allure_results: reports # Specify the directory containing Allure results
           allure_history: allure-history # Specify the directory to store Allure history
           keep_reports: 5 # Specify the number of previous reports to keep
 
@@ -82,6 +82,6 @@ jobs:
         if: always() # Execute even if previous steps fail
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }} # Provide the GitHub token for authentication
+          github_token: reports # Provide the GitHub token for authentication
           publish_branch: ABOTAutoPytest # Specify the branch to publish the report to
           publish_dir: reports # Specify the directory containing the report
