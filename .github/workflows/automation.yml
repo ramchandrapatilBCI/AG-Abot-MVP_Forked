@@ -51,12 +51,11 @@ jobs:
       - name: Run tests and generate Allure reports
         run: |
           cd Tests/
-          run: mkdir -p reports
+          mkdir -p reports
           python -m pytest test_UITests_test.py --alluredir=./reports
-#          cd ..
-#          ls -lh
-#          cd reports
-#          ls -lh
+          ls -lh
+          cd reports
+          ls -lh
 
       - name: Set Output
         id: results
