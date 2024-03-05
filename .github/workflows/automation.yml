@@ -58,6 +58,8 @@ jobs:
         run: echo "::set-output name=artifactPath::reports"
 
       - name: Publish Test Results
+        run: |
+          cd Tests/
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
