@@ -70,18 +70,36 @@ jobs:
 #            reports/*.trx
 #            reports/*.json
 #            reports/*.txt
-      - name: Allure report action # Step to generate Allure report
-        uses: simple-elf/allure-report-action@master
-        if: always() # Execute even if previous steps fail
-        with:
-          allure_results: reports # Specify the directory containing Allure results
-          allure_history: allure-history # Specify the directory to store Allure history
-          keep_reports: 5 # Specify the number of previous reports to keep
+#      - name: Allure report action # Step to generate Allure report
+#        uses: simple-elf/allure-report-action@master
+#        if: always() # Execute even if previous steps fail
+#        with:
+#          allure_results: reports # Specify the directory containing Allure results
+#          allure_history: allure-history # Specify the directory to store Allure history
+#          keep_reports: 5 # Specify the number of previous reports to keep
+#
+#      - name: Deploy Allure report to GitHub Pages # Step to deploy Allure report to GitHub Pages
+#        if: always() # Execute even if previous steps fail
+#        uses: peaceiris/actions-gh-pages@v3
+#        with:
+#          github_token: ${{ secrets.ABOTPYTESTTOKEN }} # Provide the GitHub token for authentication
+#          publish_branch: ABOTAutoPytest # Specify the branch to publish the report to
+#          publish_dir: reports # Specify the directory containing the report
 
-      - name: Deploy Allure report to GitHub Pages # Step to deploy Allure report to GitHub Pages
-        if: always() # Execute even if previous steps fail
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Test marketplace action
+        uses: simple-elf/allure-report-action@ABOTAutoPytest
+        if: always()
+        id: allure-report
         with:
-          github_token: ${{ secrets.ABOTPYTESTTOKEN }} # Provide the GitHub token for authentication
-          publish_branch: ABOTAutoPytest # Specify the branch to publish the report to
-          publish_dir: reports # Specify the directory containing the report
+          allure_results: build/allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+      
+      - name: Deploy report to Github Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v2
+        env:
+          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: allure-history
