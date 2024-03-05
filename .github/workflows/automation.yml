@@ -56,6 +56,7 @@ jobs:
           pwd
           ls -lh
           cd reports
+          chmod 755 *
           ls -lh
 
 #      - name: Set Output
