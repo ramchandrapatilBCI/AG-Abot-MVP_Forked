@@ -87,7 +87,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: allure-report
-          path: allure-report
+          path: reports
       - name: Run tests and generate allure reports
         run: |
           cd Tests/
