@@ -57,15 +57,15 @@ jobs:
           cd reports
           ls -lh
 
-      - name: Set Output
-        id: results
-        run: echo "::set-output name=artifactPath::reports"
+#      - name: Set Output
+#        id: results
+#        run: echo "::set-output name=artifactPath::reports"
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: |
-            ./reports/*.xml
-            ./reports/*.trx
-            ./reports/*.json
+            /home/runner/work/AG-Abot-MVP_Forked/AG-Abot-MVP_Forked/Tests/reports/*.xml
+            /home/runner/work/AG-Abot-MVP_Forked/AG-Abot-MVP_Forked/Tests/reports/*.trx
+            /home/runner/work/AG-Abot-MVP_Forked/AG-Abot-MVP_Forked/Tests/reports/*.json
