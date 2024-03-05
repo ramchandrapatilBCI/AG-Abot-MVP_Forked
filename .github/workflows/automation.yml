@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install pytest selenium==4.17.0 allure-pytest allure-python-commons==2.13.2 deepeval telnetlib3
+          pip install pytest selenium==4.17.0 allure-pytest allure-python-commons==2.15.0 deepeval telnetlib3
 
       - name: Install other dependencies
         run: |
@@ -82,6 +82,6 @@ jobs:
         if: always() # Execute even if previous steps fail
         uses: peaceiris/actions-gh-pages@v3
         with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }} # Provide the GitHub token for authentication
+          github_token: ${{ secrets.ABOTPYTESTTOKEN }} # Provide the GitHub token for authentication
           publish_branch: ABOTAutoPytest # Specify the branch to publish the report to
           publish_dir: reports # Specify the directory containing the report
