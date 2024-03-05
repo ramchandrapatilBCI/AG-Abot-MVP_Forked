@@ -53,10 +53,10 @@ jobs:
           cd Tests/
           mkdir -p reports
           python -m pytest test_UITests_test.py --alluredir=./reports
+          allure serve ./reports
           pwd
           ls -lh
           cd reports
-          chmod 755 *
           ls -lh
 
 #      - name: Set Output
