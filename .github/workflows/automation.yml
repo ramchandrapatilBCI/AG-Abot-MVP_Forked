@@ -90,7 +90,8 @@ jobs:
 #          path: allure-report
       - name: Run tests and generate allure reports
         run: |
-          cd reports
+          cd Tests/
+          cd reports/
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
