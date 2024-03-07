@@ -50,63 +50,12 @@ jobs:
 
       - name: Run tests and generate Allure reports
         run: |
-          mkdir -p reports
+          mkdir -p build/allure-results
           cd Tests/
           python -m pytest test_UITests_test.py --clean alluredir=build/allure-results
           cd ..
           ls -lh
           ls -lh reports
-#      - name: Generate allure report
-#        run: |
-#          allure generate --clean
-#          allure open
-
-#      - name: Set Output
-#        id: results
-#        run: echo "::set-output name=artifactPath::reports"
-
-#      - name: Publish Test Results
-#        uses: EnricoMi/publish-unit-test-result-action@v2
-#        if: always()
-#        with:
-#          files: |
-#            reports/*.xml
-#            reports/*.trx
-#            reports/*.json
-#            reports/*.txt
-#      - name: Allure report action # Step to generate Allure report
-#        uses: simple-elf/allure-report-action@master
-#        if: always() # Execute even if previous steps fail
-#        with:
-#          allure_results: reports # Specify the directory containing Allure results
-#          allure_history: allure-history # Specify the directory to store Allure history
-#          keep_reports: 5 # Specify the number of previous reports to keep
-#
-#      - name: Deploy Allure report to GitHub Pages # Step to deploy Allure report to GitHub Pages
-#        if: always() # Execute even if previous steps fail
-#        uses: peaceiris/actions-gh-pages@v3
-#        with:
-#          github_token: ${{ secrets.ABOTPYTESTTOKEN }} # Provide the GitHub token for authentication
-#          publish_branch: ABOTAutoPytest # Specify the branch to publish the report to
-#          publish_dir: reports # Specify the directory containing the report
-
-#      - name: Test marketplace action
-#        uses: simple-elf/allure-report-action@master
-#        if: always()
-#        id: allure-report
-#        with:
-#          allure_results: build/allure-results
-#          gh_pages: gh-pages
-#          allure_report: allure-report
-#          allure_history: allure-history
-#
-#      - name: Deploy report to Github Pages
-#        if: always()
-#        uses: peaceiris/actions-gh-pages@v2
-#        env:
-#          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          PUBLISH_BRANCH: gh-pages
-#          PUBLISH_DIR: allure-history
 
       - name: Load test report history
         uses: actions/checkout@v3
