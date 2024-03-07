@@ -54,9 +54,7 @@ jobs:
           mkdir -p build/allure-results
           ls -lh
           python -m pytest test_UITests_test.py --alluredir=build/allure-results
-#          cd ..
-#          ls -lh build/allure-results
-#          ls -lh reports
+          ls -lh build/allure-results
 
       - name: Load test report history
         uses: actions/checkout@v3
@@ -90,4 +88,4 @@ jobs:
           context: 'Test report'
           state: 'success'
           sha: ${{ github.sha }}
-          target_url: https://ramchandrapatilBCI.github.io/AG-Abot-MVP_Forked/tree/gh-pages/${{ github.run_number }}/index.html
+          target_url: https://ramchandrapatilBCI.github.io/AG-Abot-MVP_Forked/${{ github.run_number }}/index.html
