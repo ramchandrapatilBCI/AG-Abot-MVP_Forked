@@ -53,6 +53,7 @@ jobs:
           cd Tests/
           mkdir -p allure-results
           ls -lh
+          cd allure-results
           python -m pytest test_UITests_test.py alluredir=allure-results
 #          cd ..
 #          ls -lh
