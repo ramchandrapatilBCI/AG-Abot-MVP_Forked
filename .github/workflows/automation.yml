@@ -56,6 +56,10 @@ jobs:
           cd ..
           ls -lh
           ls -lh reports
+      - name: Generate allure report
+        run: |
+          allure generate --clean
+          allure open
 
 #      - name: Set Output
 #        id: results
