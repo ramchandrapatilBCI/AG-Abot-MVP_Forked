@@ -53,7 +53,7 @@ jobs:
           cd Tests/
           mkdir -p build/allure-results
           ls -lh
-          python -m pytest test_UITests_test.py --alluredir=build/allure-results
+          python -m pytest test_UITests_test.py --clean-alluredir --alluredir=build/allure-results 
           ls -lh build/allure-results
 
       - name: Load test report history
