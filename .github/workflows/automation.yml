@@ -53,9 +53,9 @@ jobs:
           mkdir -p build/allure-results
           cd Tests/
           python -m pytest test_UITests_test.py alluredir=build/allure-results
-          cd ..
-          ls -lh
-          ls -lh reports
+#          cd ..
+#          ls -lh
+#          ls -lh reports
 
       - name: Load test report history
         uses: actions/checkout@v3
