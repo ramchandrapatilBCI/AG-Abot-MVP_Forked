@@ -55,7 +55,7 @@ jobs:
           ls -lh
           python -m pytest test_UITests_test.py --alluredir=build/allure-results
 #          cd ..
-#          ls -lh
+          ls -lh build/allure-results
 #          ls -lh reports
 
       - name: Load test report history
