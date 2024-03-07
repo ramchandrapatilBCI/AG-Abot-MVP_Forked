@@ -90,4 +90,4 @@ jobs:
           context: 'Test report'
           state: 'success'
           sha: ${{ github.sha }}
-          target_url: https://ramchandrapatilBCI.github.io/AG-Abot-MVP_Forked/allure-history/${{ github.run_number }}
+          target_url: https://ramchandrapatilBCI.github.io/AG-Abot-MVP_Forked/tree/gh-pages/${{ github.run_number }}
