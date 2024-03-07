@@ -1,4 +1,6 @@
 import time
+
+import allure
 from telnetlib3 import EC
 # from selenium.webdriver.support import expected_conditions as EC
 import pytest
@@ -47,6 +49,7 @@ class TestUITest:
     #     assert ele_input, 'Wigon Counsil logo is missing'
 
     @pytest.mark.usefixtures("driver")
+    @allure.title("test_Transcript")
     def test_Transcript(self, driver):
         time.sleep(5)
         chat_input = driver.find_element(By.ID, f"chat-input")
@@ -61,6 +64,7 @@ class TestUITest:
         assert ele_input, 'Transcript is NOT generated'
 
     @pytest.mark.usefixtures("driver")
+    @allure.title("NewChatPopupWindow")
     def test_NewChatPopupWindow(self, driver):
         time.sleep(5)
         driver.find_element(By.ID, f"new-chat-button").click()
