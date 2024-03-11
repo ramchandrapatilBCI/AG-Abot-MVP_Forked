@@ -49,16 +49,16 @@ jobs:
         run: |
           cd Tests/
           mkdir -p build/allure-results
-          python -m pytest test_UITests_test.py --alluredir \build/allure-results
+          python -m pytest test_UITests_test.py --alluredir \build/allureresults
 #          python -m pytest test_UITests_test.py -v -s --alluredir=build/allure-results --disable-warnings
 
-      - name: Run tests and generate Allure reports
-        run: |
-          cd Tests/
-          mkdir -p build/allure-results
-          ls -lh
-          python -m pytest test_UITests_test.py --clean-alluredir --alluredir=build/allure-results 
-          ls -lh build/allure-results
+#      - name: Run tests and generate Allure reports
+#        run: |
+#          cd Tests/
+#          mkdir -p build/allure-results
+#          ls -lh
+#          python -m pytest test_UITests_test.py --clean-alluredir --alluredir=build/allure-results
+#          ls -lh build/allure-results
 
       - name: Load test report history
         uses: actions/checkout@v2
@@ -74,7 +74,7 @@ jobs:
         with:
           gh_pages: gh-pages
           allure_history: allure-history
-          allure_results: build/allure-results
+          allure_results: build/allureresults
 
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
