@@ -82,7 +82,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allurehistory
+          publish_dir: allureresults
 
 #      - name: Post the link to the reports
 #        if: always()
