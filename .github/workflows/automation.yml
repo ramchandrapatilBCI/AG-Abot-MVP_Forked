@@ -47,18 +47,11 @@ jobs:
 
       - name: Run tests and generate Allure reports
         run: |
-          mkdir -p ./allureresults
+          mkdir -p allureresults
           cd Tests/
           python -m pytest test_UITests_test.py --alluredir=../allureresults
-#          python -m pytest test_UITests_test.py -v -s --alluredir=build/allure-results --disable-warnings
-
-#      - name: Run tests and generate Allure reports
-#        run: |
-#          cd Tests/
-#          mkdir -p build/allure-results
-#          ls -lh
-#          python -m pytest test_UITests_test.py --clean-alluredir --alluredir=build/allure-results
-#          ls -lh build/allure-results
+          cd ..
+          ls -lh
 
       - name: Load test report history
         uses: actions/checkout@v3
@@ -73,23 +66,23 @@ jobs:
         if: always()
         with:
           gh_pages: gh-pages
-          allure_history: allurehistory
-          allure_results: ../allureresults
+          allure_history: allure-history
+          allure_results: allureresults
 
-      - name: Publish test reports
+      - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
         if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: ../allureresults
+          publish_dir: allure-history
 
-#      - name: Post the link to the reports
-#        if: always()
-#        uses: Sibz/github-status-action@v1
-#        with:
-#          authToken: ${{secrets.GITHUB_TOKEN}}
-#          context: 'Test report'
-#          state: 'success'
-#          sha: ${{ github.sha }}
-#          target_url: https://ramchandrapatilBCI.github.io/AG-Abot-MVP_Forked/${{ github.run_number }}/index.html
+      - name: Post the link to the reports
+        if: always()
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{secrets.GITHUB_TOKEN}}
+          context: 'Test report'
+          state: 'success'
+          sha: ${{ github.sha }}
+          target_url: https://ramchandrapatilBCI.github.io/AG-Abot-MVP_Forked/${{ github.run_number }}/index.html
