@@ -48,7 +48,7 @@ jobs:
       - name: Run tests and generate Allure reports
         run: |
           cd Tests/
-          mkdir -p build/allure-results
+          mkdir -p build/allureresults
           python -m pytest test_UITests_test.py --alluredir=build/allureresults
 #          python -m pytest test_UITests_test.py -v -s --alluredir=build/allure-results --disable-warnings
 
