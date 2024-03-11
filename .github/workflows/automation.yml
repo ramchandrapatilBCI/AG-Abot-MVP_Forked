@@ -45,9 +45,6 @@ jobs:
             pip install -r requirements.txt
           fi
 
-#      - name: Create reports directory
-#        run: mkdir -p reports
-
       - name: Run tests and generate Allure reports
         run: |
           cd Tests/
