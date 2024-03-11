@@ -76,7 +76,7 @@ jobs:
           allure_history: allurehistory
           allure_results: ./allureresults
 
-      - name: Publish test report
+      - name: Publish test reports
         uses: peaceiris/actions-gh-pages@v3
         if: always()
         with:
