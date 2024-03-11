@@ -47,9 +47,9 @@ jobs:
 
       - name: Run tests and generate Allure reports
         run: |
-          cd Tests/
           mkdir -p allureresults
-          python -m pytest test_UITests_test.py --alluredir=allureresults
+          cd Tests/
+          python -m pytest test_UITests_test.py --alluredir=./allureresults
 #          python -m pytest test_UITests_test.py -v -s --alluredir=build/allure-results --disable-warnings
 
 #      - name: Run tests and generate Allure reports
@@ -74,7 +74,7 @@ jobs:
         with:
           gh_pages: gh-pages
           allure_history: allurehistory
-          allure_results: allureresults
+          allure_results: ./allureresults
 
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
@@ -82,7 +82,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allureresults
+          publish_dir: ./allureresults
 
 #      - name: Post the link to the reports
 #        if: always()
