@@ -77,7 +77,7 @@ jobs:
           publish_branch: gh-pages
           publish_dir: allure-history
 
-      - name: Post the link to the report
+      - name: Post the link to the reports
         if: always()
         uses: Sibz/github-status-action@v1
         with:
